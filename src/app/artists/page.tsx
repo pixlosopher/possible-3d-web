@@ -4,62 +4,62 @@ import { Printer, Users, Palette, Lightbulb, Package, ArrowRight, Check } from "
 const SERVICES = [
   {
     icon: Palette,
-    title: "2D to 3D Conversion",
+    title: "Conversión 2D a 3D",
     description:
-      "We transform your 2D artwork, illustrations, or designs into fully realized 3D models optimized for printing.",
+      "Transformamos tu arte 2D, ilustraciones o diseños en modelos 3D completamente realizados y optimizados para impresión.",
   },
   {
     icon: Lightbulb,
-    title: "Design Consulting",
+    title: "Consultoría de Diseño",
     description:
-      "Expert guidance on making your designs printable, including material selection, structural integrity, and finish options.",
+      "Orientación experta para hacer tus diseños imprimibles, incluyendo selección de materiales, integridad estructural y opciones de acabado.",
   },
   {
     icon: Package,
-    title: "Production Support",
+    title: "Soporte de Producción",
     description:
-      "From prototyping to small batch production, we handle the entire 3D printing process so you can focus on creating.",
+      "Desde prototipado hasta producción en lotes pequeños, manejamos todo el proceso de impresión 3D para que tú puedas concentrarte en crear.",
   },
 ];
 
 const PROCESS = [
   {
     step: 1,
-    title: "Share Your Vision",
-    description: "Send us your artwork, sketches, or ideas. We'll discuss your goals and requirements.",
+    title: "Comparte Tu Visión",
+    description: "Envíanos tu arte, bocetos o ideas. Discutiremos tus objetivos y requerimientos.",
   },
   {
     step: 2,
-    title: "3D Development",
-    description: "Our team creates a detailed 3D model, iterating with you until it's perfect.",
+    title: "Desarrollo 3D",
+    description: "Nuestro equipo crea un modelo 3D detallado, iterando contigo hasta que sea perfecto.",
   },
   {
     step: 3,
-    title: "Prototype & Refine",
-    description: "We print a prototype for your review and make any necessary adjustments.",
+    title: "Prototipo y Refinamiento",
+    description: "Imprimimos un prototipo para tu revisión y hacemos los ajustes necesarios.",
   },
   {
     step: 4,
-    title: "Production",
-    description: "Once approved, we produce your final pieces with professional quality.",
+    title: "Producción",
+    description: "Una vez aprobado, producimos tus piezas finales con calidad profesional.",
   },
 ];
 
 const TESTIMONIALS = [
   {
-    quote: "They turned my character illustration into a stunning collectible figure. The attention to detail was incredible.",
-    author: "Maria G.",
-    role: "Illustrator",
+    quote: "Convirtieron mi ilustración de personaje en una figura coleccionable impresionante. La atención al detalle fue increíble.",
+    author: "María G.",
+    role: "Ilustradora",
   },
   {
-    quote: "As someone with no 3D experience, their consulting made it possible for me to launch my own figure line.",
-    author: "James T.",
-    role: "Comic Artist",
+    quote: "Como alguien sin experiencia en 3D, su consultoría hizo posible que lanzara mi propia línea de figuras.",
+    author: "Jaime T.",
+    role: "Artista de Cómic",
   },
   {
-    quote: "Professional, patient, and truly understood my artistic vision. Highly recommend for any artist.",
-    author: "Sarah K.",
-    role: "Sculptor",
+    quote: "Profesionales, pacientes, y realmente entendieron mi visión artística. Muy recomendados para cualquier artista.",
+    author: "Sara K.",
+    role: "Escultora",
   },
 ];
 
@@ -78,23 +78,23 @@ export default function ArtistsPage() {
             </Link>
             <div className="hidden md:flex items-center gap-8">
               <Link href="/create" className="text-zinc-300 hover:text-white transition">
-                Create
+                Crear
               </Link>
               <Link href="/pricing" className="text-zinc-300 hover:text-white transition">
-                Pricing
+                Precios
               </Link>
               <Link href="/artists" className="text-[#9AC32E] font-medium">
-                For Artists
+                Para Artistas
               </Link>
               <Link href="/contact" className="text-zinc-300 hover:text-white transition">
-                Contact
+                Contacto
               </Link>
             </div>
             <Link
               href="/contact"
               className="bg-[#9AC32E] hover:bg-[#BCDC6C] text-white font-semibold px-4 py-2 rounded-full transition"
             >
-              Get Consulting
+              Obtener Consultoría
             </Link>
           </div>
         </div>
@@ -105,31 +105,31 @@ export default function ArtistsPage() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-[#9AC32E]/10 border border-[#9AC32E]/20 rounded-full px-4 py-2 mb-6">
             <Users className="w-4 h-4 text-[#9AC32E]" />
-            <span className="text-[#9AC32E] text-sm font-medium">For Artists & Creators</span>
+            <span className="text-[#9AC32E] text-sm font-medium">Para Artistas y Creadores</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Bring Your Art to{" "}
+            Da Vida a Tu Arte{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#04ACC8] to-[#9AC32E]">
-              Life in 3D
+              en 3D
             </span>
           </h1>
           <p className="text-xl text-zinc-400 mb-8 max-w-2xl mx-auto">
-            Personalized consulting for artists who want to transform their 2D creations
-            into stunning 3D printed collectibles, figures, and art pieces.
+            Consultoría personalizada para artistas que quieren transformar sus creaciones 2D
+            en impresionantes coleccionables 3D, figuras y piezas de arte.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 bg-[#9AC32E] hover:bg-[#BCDC6C] text-white font-semibold px-8 py-4 rounded-full text-lg transition"
             >
-              Schedule a Consultation
+              Agenda una Consulta
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="#process"
               className="inline-flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition"
             >
-              Learn More
+              Conoce Más
             </Link>
           </div>
         </div>
@@ -139,8 +139,8 @@ export default function ArtistsPage() {
       <section className="py-16 px-4 bg-zinc-900/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What We Offer</h2>
-            <p className="text-zinc-400">Comprehensive support for artists at every stage</p>
+            <h2 className="text-3xl font-bold mb-4">Lo Que Ofrecemos</h2>
+            <p className="text-zinc-400">Soporte integral para artistas en cada etapa</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {SERVICES.map((service) => (
@@ -163,8 +163,8 @@ export default function ArtistsPage() {
       <section id="process" className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">How It Works</h2>
-            <p className="text-zinc-400">A collaborative process from concept to creation</p>
+            <h2 className="text-3xl font-bold mb-4">¿Cómo Funciona?</h2>
+            <p className="text-zinc-400">Un proceso colaborativo desde el concepto hasta la creación</p>
           </div>
           <div className="space-y-6">
             {PROCESS.map((item, index) => (
@@ -192,7 +192,7 @@ export default function ArtistsPage() {
       <section className="py-16 px-4 bg-zinc-900/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What Artists Say</h2>
+            <h2 className="text-3xl font-bold mb-4">Lo Que Dicen Los Artistas</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {TESTIMONIALS.map((testimonial, index) => (
@@ -216,18 +216,18 @@ export default function ArtistsPage() {
         <div className="max-w-4xl mx-auto">
           <div className="bg-gradient-to-r from-[#04ACC8]/20 to-[#9AC32E]/20 border border-[#9AC32E]/30 rounded-3xl p-8 md:p-12">
             <h2 className="text-3xl font-bold mb-6 text-center">
-              Consulting Package Includes
+              El Paquete de Consultoría Incluye
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                "Initial consultation call",
-                "Design feasibility analysis",
-                "3D model development",
-                "Unlimited revisions",
-                "Prototype printing",
-                "Material recommendations",
-                "Production guidance",
-                "Ongoing support",
+                "Llamada de consulta inicial",
+                "Análisis de viabilidad del diseño",
+                "Desarrollo de modelo 3D",
+                "Revisiones ilimitadas",
+                "Impresión de prototipo",
+                "Recomendaciones de material",
+                "Guía de producción",
+                "Soporte continuo",
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-[#9AC32E] flex-shrink-0" />
@@ -237,13 +237,13 @@ export default function ArtistsPage() {
             </div>
             <div className="mt-8 text-center">
               <p className="text-zinc-400 mb-4">
-                Pricing varies based on project complexity. Contact us for a custom quote.
+                El precio varía según la complejidad del proyecto. Contáctanos para una cotización personalizada.
               </p>
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-2 bg-[#9AC32E] hover:bg-[#BCDC6C] text-white font-semibold px-8 py-4 rounded-full transition"
               >
-                Get Started
+                Comenzar
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
@@ -254,23 +254,23 @@ export default function ArtistsPage() {
       {/* CTA */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Art?</h2>
+          <h2 className="text-3xl font-bold mb-4">¿Listo para Transformar Tu Arte?</h2>
           <p className="text-zinc-400 mb-8 text-lg">
-            Let&apos;s discuss your vision and create something amazing together.
+            Hablemos de tu visión y creemos algo increíble juntos.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 bg-[#9AC32E] hover:bg-[#BCDC6C] text-white font-semibold px-8 py-4 rounded-full text-lg transition"
             >
-              Schedule Consultation
+              Agenda Consulta
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/create"
               className="inline-flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition"
             >
-              Try Self-Service First
+              Probar Autoservicio Primero
             </Link>
           </div>
         </div>

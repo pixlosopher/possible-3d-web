@@ -21,32 +21,32 @@ interface OrderDetails {
 
 const statusConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   pending: {
-    label: "Pending Payment",
+    label: "Pago Pendiente",
     icon: <Clock className="w-5 h-5" />,
     color: "text-yellow-400",
   },
   paid: {
-    label: "Payment Received",
+    label: "Pago Recibido",
     icon: <CheckCircle className="w-5 h-5" />,
     color: "text-[#04ACC8]",
   },
   processing: {
-    label: "Printing",
+    label: "Imprimiendo",
     icon: <Package className="w-5 h-5" />,
     color: "text-blue-400",
   },
   shipped: {
-    label: "Shipped",
+    label: "Enviado",
     icon: <Truck className="w-5 h-5" />,
     color: "text-purple-400",
   },
   delivered: {
-    label: "Delivered",
+    label: "Entregado",
     icon: <CheckCircle className="w-5 h-5" />,
     color: "text-[#04ACC8]",
   },
   cancelled: {
-    label: "Cancelled",
+    label: "Cancelado",
     icon: <XCircle className="w-5 h-5" />,
     color: "text-red-400",
   },
@@ -72,13 +72,13 @@ export default function OrderDetailPage() {
       const response = await fetch(`${API_URL}/api/order/${orderId}`);
 
       if (!response.ok) {
-        throw new Error("Order not found");
+        throw new Error("Pedido no encontrado");
       }
 
       const data = await response.json();
       setOrder(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load order");
+      setError(err instanceof Error ? err.message : "Error al cargar el pedido");
     } finally {
       setLoading(false);
     }
@@ -107,22 +107,22 @@ export default function OrderDetailPage() {
         {loading ? (
           <div className="text-center">
             <div className="animate-spin w-12 h-12 border-4 border-[#04ACC8] border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-zinc-400">Loading order details...</p>
+            <p className="text-zinc-400">Cargando detalles del pedido...</p>
           </div>
         ) : error ? (
           <div className="text-center">
             <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Order Not Found</h1>
+            <h1 className="text-2xl font-bold mb-2">Pedido No Encontrado</h1>
             <p className="text-zinc-400 mb-8">{error}</p>
             <Link href="/" className="text-[#04ACC8] hover:text-emerald-300">
-              Return to home
+              Volver al inicio
             </Link>
           </div>
         ) : order ? (
           <div>
             {/* Order Header */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold mb-2">Order #{order.id}</h1>
+              <h1 className="text-3xl font-bold mb-2">Pedido #{order.id}</h1>
               <div className={`flex items-center justify-center gap-2 ${status?.color}`}>
                 {status?.icon}
                 <span className="font-medium">{status?.label}</span>
@@ -131,14 +131,14 @@ export default function OrderDetailPage() {
 
             {/* Order Details Card */}
             <div className="bg-zinc-800/50 border border-zinc-700 rounded-2xl p-6 mb-8">
-              <h2 className="text-lg font-semibold mb-4">Order Details</h2>
+              <h2 className="text-lg font-semibold mb-4">Detalles del Pedido</h2>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Order ID</span>
+                  <span className="text-zinc-400">ID del Pedido</span>
                   <span className="font-mono">{order.id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Size</span>
+                  <span className="text-zinc-400">Tamaño</span>
                   <span className="capitalize">{order.size}</span>
                 </div>
                 <div className="flex justify-between">
@@ -146,16 +146,16 @@ export default function OrderDetailPage() {
                   <span className="uppercase">{order.material}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Email</span>
+                  <span className="text-zinc-400">Correo</span>
                   <span>{order.customer_email}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Order Date</span>
-                  <span>{new Date(order.created_at).toLocaleDateString()}</span>
+                  <span className="text-zinc-400">Fecha del Pedido</span>
+                  <span>{new Date(order.created_at).toLocaleDateString('es-MX')}</span>
                 </div>
                 {order.tracking_number && (
                   <div className="flex justify-between">
-                    <span className="text-zinc-400">Tracking Number</span>
+                    <span className="text-zinc-400">Número de Rastreo</span>
                     <span className="font-mono text-[#04ACC8]">{order.tracking_number}</span>
                   </div>
                 )}
@@ -163,7 +163,7 @@ export default function OrderDetailPage() {
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
                     <span className="text-[#04ACC8]">
-                      ${(order.price_cents / 100).toFixed(2)}
+                      ${(order.price_cents / 100).toFixed(2)} USD
                     </span>
                   </div>
                 </div>
@@ -172,32 +172,32 @@ export default function OrderDetailPage() {
 
             {/* Order Timeline */}
             <div className="bg-zinc-800/50 border border-zinc-700 rounded-2xl p-6 mb-8">
-              <h2 className="text-lg font-semibold mb-4">Order Timeline</h2>
+              <h2 className="text-lg font-semibold mb-4">Línea de Tiempo del Pedido</h2>
               <div className="space-y-4">
                 <TimelineItem
                   completed={true}
-                  label="Order Placed"
-                  description={new Date(order.created_at).toLocaleString()}
+                  label="Pedido Realizado"
+                  description={new Date(order.created_at).toLocaleString('es-MX')}
                 />
                 <TimelineItem
                   completed={!!order.paid_at}
-                  label="Payment Confirmed"
-                  description={order.paid_at ? new Date(order.paid_at).toLocaleString() : "Pending"}
+                  label="Pago Confirmado"
+                  description={order.paid_at ? new Date(order.paid_at).toLocaleString('es-MX') : "Pendiente"}
                 />
                 <TimelineItem
                   completed={order.status === "processing" || order.status === "shipped" || order.status === "delivered"}
-                  label="Printing"
-                  description="Your model is being 3D printed"
+                  label="Imprimiendo"
+                  description="Tu modelo está siendo impreso en 3D"
                 />
                 <TimelineItem
                   completed={order.status === "shipped" || order.status === "delivered"}
-                  label="Shipped"
-                  description={order.shipped_at ? new Date(order.shipped_at).toLocaleString() : "Pending"}
+                  label="Enviado"
+                  description={order.shipped_at ? new Date(order.shipped_at).toLocaleString('es-MX') : "Pendiente"}
                 />
                 <TimelineItem
                   completed={order.status === "delivered"}
-                  label="Delivered"
-                  description="Package delivered"
+                  label="Entregado"
+                  description="Paquete entregado"
                 />
               </div>
             </div>
@@ -208,13 +208,13 @@ export default function OrderDetailPage() {
                 href="/create"
                 className="block w-full bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold py-4 rounded-xl transition text-center"
               >
-                Create Another Model
+                Crear Otro Modelo
               </Link>
               <Link
                 href="/"
                 className="block w-full text-zinc-400 hover:text-white transition py-2 text-center"
               >
-                Return to Home
+                Volver al Inicio
               </Link>
             </div>
           </div>

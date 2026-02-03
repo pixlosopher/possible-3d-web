@@ -9,18 +9,18 @@ interface GeneratorProps {
 }
 
 const STYLE_OPTIONS = [
-  { value: "figurine", label: "Figurine", description: "Perfect for collectibles" },
-  { value: "sculpture", label: "Sculpture", description: "Artistic pieces" },
-  { value: "character", label: "Character", description: "Full-body figures" },
-  { value: "object", label: "Object", description: "Products & props" },
+  { value: "figurine", label: "Figura", description: "Perfecta para coleccionables" },
+  { value: "sculpture", label: "Escultura", description: "Piezas artísticas" },
+  { value: "character", label: "Personaje", description: "Figuras de cuerpo completo" },
+  { value: "object", label: "Objeto", description: "Productos y props" },
 ];
 
 const EXAMPLE_PROMPTS = [
-  "A steampunk owl with brass gears and glowing amber eyes",
-  "A cute robot with a heart-shaped chest panel",
-  "A dragon curled around a crystal orb",
-  "A wizard cat in a starry robe holding a wand",
-  "A mechanical butterfly with intricate wing patterns",
+  "Un búho steampunk con engranajes de latón y ojos brillantes de ámbar",
+  "Un robot lindo con un panel de corazón en el pecho",
+  "Un dragón enrollado alrededor de un orbe de cristal",
+  "Un gato mago con túnica de estrellas sosteniendo una varita",
+  "Una mariposa mecánica con patrones de alas intrincados",
 ];
 
 export default function Generator({ onComplete }: GeneratorProps) {
@@ -57,7 +57,7 @@ export default function Generator({ onComplete }: GeneratorProps) {
       );
     } catch (err) {
       setIsGenerating(false);
-      setError(err instanceof Error ? err.message : "Failed to start generation");
+      setError(err instanceof Error ? err.message : "Error al iniciar la generación");
     }
   }, [prompt, style, onComplete]);
 
@@ -80,22 +80,22 @@ export default function Generator({ onComplete }: GeneratorProps) {
   };
 
   const getStatusMessage = () => {
-    if (!status) return "Starting...";
+    if (!status) return "Iniciando...";
     switch (status.status) {
       case "pending":
-        return "Preparing your request...";
+        return "Preparando tu solicitud...";
       case "generating_image":
-        return "Creating 2D concept...";
+        return "Creando concepto 2D...";
       case "converting_3d":
-        return "Converting to 3D model...";
+        return "Convirtiendo a modelo 3D...";
       case "estimating_cost":
-        return "Calculating pricing...";
+        return "Calculando precio...";
       case "completed":
-        return "Complete!";
+        return "¡Completado!";
       case "failed":
-        return "Generation failed";
+        return "La generación falló";
       default:
-        return "Processing...";
+        return "Procesando...";
     }
   };
 
@@ -104,12 +104,12 @@ export default function Generator({ onComplete }: GeneratorProps) {
       {/* Prompt Input */}
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-2">
-          Describe what you want to create
+          Describe lo que quieres crear
         </label>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="A steampunk owl with brass gears and glowing amber eyes..."
+          placeholder="Un búho steampunk con engranajes de latón y ojos brillantes de ámbar..."
           className="w-full h-32 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8] resize-none"
           disabled={isGenerating}
         />
@@ -130,7 +130,7 @@ export default function Generator({ onComplete }: GeneratorProps) {
       {/* Style Selection */}
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-2">
-          Style
+          Estilo
         </label>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {STYLE_OPTIONS.map((option) => (
@@ -175,7 +175,7 @@ export default function Generator({ onComplete }: GeneratorProps) {
           {status.image_path && (
             <div className="mt-4 text-sm text-zinc-500">
               <Check className="w-4 h-4 inline mr-2 text-[#04ACC8]" />
-              2D concept generated
+              Concepto 2D generado
             </div>
           )}
         </div>
@@ -194,18 +194,18 @@ export default function Generator({ onComplete }: GeneratorProps) {
         {isGenerating ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            Generating...
+            Generando...
           </>
         ) : (
           <>
             <Sparkles className="w-5 h-5" />
-            Generate 3D Model
+            Generar Modelo 3D
           </>
         )}
       </button>
 
       <p className="text-center text-zinc-500 text-sm">
-        Free preview • Pay only when you order a print
+        Vista previa gratis • Paga solo cuando ordenes una impresión
       </p>
     </div>
   );

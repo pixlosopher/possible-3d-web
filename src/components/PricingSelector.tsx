@@ -10,14 +10,14 @@ interface PricingSelectorProps {
 }
 
 const SIZES = [
-  { id: "small", label: "Small", height: "50mm", description: "Desk figurine" },
-  { id: "medium", label: "Medium", height: "75mm", description: "Collectible size" },
-  { id: "large", label: "Large", height: "100mm", description: "Statement piece" },
+  { id: "small", label: "Pequeño", height: "50mm", description: "Figura de escritorio" },
+  { id: "medium", label: "Mediano", height: "75mm", description: "Tamaño coleccionable" },
+  { id: "large", label: "Grande", height: "100mm", description: "Pieza de exhibición" },
 ];
 
 const MATERIALS = [
-  { id: "pla", label: "PLA Plastic", description: "Durable & affordable", color: "text-blue-400" },
-  { id: "resin", label: "Premium Resin", description: "High detail finish", color: "text-purple-400" },
+  { id: "pla", label: "Plástico PLA", description: "Duradero y económico", color: "text-blue-400" },
+  { id: "resin", label: "Resina Premium", description: "Acabado de alto detalle", color: "text-purple-400" },
 ];
 
 const PRICING: Record<string, Record<string, number>> = {
@@ -51,7 +51,7 @@ export default function PricingSelector({
       {/* Size Selection */}
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-3">
-          Select Size
+          Selecciona Tamaño
         </label>
         <div className="grid grid-cols-3 gap-3">
           {SIZES.map((sizeOption) => (
@@ -86,7 +86,7 @@ export default function PricingSelector({
       {/* Material Selection */}
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-3">
-          Select Material
+          Selecciona Material
         </label>
         <div className="grid grid-cols-2 gap-3">
           {MATERIALS.map((materialOption) => (
@@ -111,7 +111,7 @@ export default function PricingSelector({
                 {materialOption.description}
               </div>
               <div className="text-lg font-bold text-white mt-2">
-                ${PRICING[size][materialOption.id]}
+                ${PRICING[size][materialOption.id]} USD
               </div>
             </button>
           ))}
@@ -122,7 +122,7 @@ export default function PricingSelector({
       <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
         <div className="flex justify-between items-center">
           <div>
-            <div className="text-zinc-400 text-sm">Your Selection</div>
+            <div className="text-zinc-400 text-sm">Tu Selección</div>
             <div className="text-white font-medium">
               {SIZES.find((s) => s.id === size)?.label} ({SIZES.find((s) => s.id === size)?.height}) •{" "}
               {MATERIALS.find((m) => m.id === material)?.label}
@@ -131,12 +131,12 @@ export default function PricingSelector({
           <div className="text-right">
             <div className="text-zinc-400 text-sm">Total</div>
             <div className="text-3xl font-bold text-[#04ACC8]">
-              ${currentPrice}
+              ${currentPrice} USD
             </div>
           </div>
         </div>
         <div className="mt-3 pt-3 border-t border-zinc-700 text-xs text-zinc-500">
-          Includes free shipping • Delivered in 5-10 business days
+          Incluye envío gratis • Entrega en 5-10 días hábiles
         </div>
       </div>
     </div>

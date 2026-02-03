@@ -13,7 +13,7 @@ const ModelPreview = dynamic(() => import("@/components/ModelPreview"), {
   ssr: false,
   loading: () => (
     <div className="w-full aspect-square bg-zinc-900 rounded-2xl border border-zinc-700 flex items-center justify-center">
-      <div className="text-zinc-500">Loading 3D viewer...</div>
+      <div className="text-zinc-500">Cargando visor 3D...</div>
     </div>
   ),
 });
@@ -67,7 +67,7 @@ export default function CreatePage() {
               className="flex items-center gap-2 text-zinc-400 hover:text-white transition"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Home
+              Volver al Inicio
             </Link>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function CreatePage() {
               >
                 1
               </span>
-              <span className="hidden sm:inline">Generate</span>
+              <span className="hidden sm:inline">Generar</span>
             </div>
             <div className="w-12 h-px bg-zinc-700" />
             <div
@@ -112,7 +112,7 @@ export default function CreatePage() {
               >
                 2
               </span>
-              <span className="hidden sm:inline">Customize</span>
+              <span className="hidden sm:inline">Personalizar</span>
             </div>
             <div className="w-12 h-px bg-zinc-700" />
             <div
@@ -127,7 +127,7 @@ export default function CreatePage() {
               >
                 3
               </span>
-              <span className="hidden sm:inline">Checkout</span>
+              <span className="hidden sm:inline">Pagar</span>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function CreatePage() {
             <ModelPreview modelUrl={modelUrl} imageUrl={imageUrl} />
             {jobStatus && (
               <div className="mt-4 bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
-                <h3 className="text-sm font-medium text-zinc-400 mb-2">Your Design</h3>
+                <h3 className="text-sm font-medium text-zinc-400 mb-2">Tu Diseño</h3>
                 <p className="text-white">{jobStatus.description}</p>
               </div>
             )}
@@ -151,9 +151,9 @@ export default function CreatePage() {
           <div className="order-1 lg:order-2">
             {step === "generate" && (
               <div>
-                <h1 className="text-3xl font-bold mb-2">Create Your 3D Model</h1>
+                <h1 className="text-3xl font-bold mb-2">Crea Tu Modelo 3D</h1>
                 <p className="text-zinc-400 mb-8">
-                  Describe what you want to create, and our AI will generate a unique 3D model for you.
+                  Describe lo que quieres crear, y nuestra IA generará un modelo 3D único para ti.
                 </p>
                 <Generator onComplete={handleGenerationComplete} />
               </div>
@@ -161,9 +161,9 @@ export default function CreatePage() {
 
             {step === "customize" && (
               <div>
-                <h1 className="text-3xl font-bold mb-2">Customize Your Print</h1>
+                <h1 className="text-3xl font-bold mb-2">Personaliza Tu Impresión</h1>
                 <p className="text-zinc-400 mb-8">
-                  Choose the size and material for your 3D print.
+                  Elige el tamaño y material para tu impresión 3D.
                 </p>
                 <PricingSelector
                   onSelect={handlePricingSelect}
@@ -176,13 +176,13 @@ export default function CreatePage() {
                     className="w-full flex items-center justify-center gap-2 bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold py-4 rounded-xl transition"
                   >
                     <ShoppingCart className="w-5 h-5" />
-                    Proceed to Checkout - ${price}
+                    Proceder al Pago - ${price} USD
                   </button>
                   <button
                     onClick={() => setStep("generate")}
                     className="w-full text-zinc-400 hover:text-white transition py-2"
                   >
-                    ← Generate a different model
+                    ← Generar un modelo diferente
                   </button>
                 </div>
               </div>
@@ -190,9 +190,9 @@ export default function CreatePage() {
 
             {step === "checkout" && (
               <div>
-                <h1 className="text-3xl font-bold mb-2">Complete Your Order</h1>
+                <h1 className="text-3xl font-bold mb-2">Completa Tu Pedido</h1>
                 <p className="text-zinc-400 mb-8">
-                  Enter your shipping details and payment information.
+                  Ingresa tus datos de envío e información de pago.
                 </p>
                 <CheckoutForm
                   jobId={jobStatus?.id || ""}
@@ -230,7 +230,7 @@ function CheckoutForm({
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("US");
+  const [country, setCountry] = useState("MX");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -257,17 +257,17 @@ function CheckoutForm({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to create checkout session");
+        throw new Error(data.error || "Error al crear la sesión de pago");
       }
 
       // Redirect to Stripe Checkout
       if (data.checkout_url) {
         window.location.href = data.checkout_url;
       } else {
-        throw new Error("No checkout URL received");
+        throw new Error("No se recibió URL de pago");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Checkout failed");
+      setError(err instanceof Error ? err.message : "Error en el pago");
       setIsProcessing(false);
     }
   };
@@ -294,16 +294,16 @@ function CheckoutForm({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to create PayPal checkout");
+        throw new Error(data.error || "Error al crear pago con PayPal");
       }
 
       if (data.checkout_url) {
         window.location.href = data.checkout_url;
       } else {
-        throw new Error("No PayPal checkout URL received");
+        throw new Error("No se recibió URL de PayPal");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "PayPal checkout failed");
+      setError(err instanceof Error ? err.message : "Error en pago con PayPal");
       setIsProcessing(false);
     }
   };
@@ -320,28 +320,28 @@ function CheckoutForm({
       {/* Email */}
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-2">
-          Email Address
+          Correo Electrónico
         </label>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          placeholder="you@example.com"
+          placeholder="tu@correo.com"
           className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
         />
       </div>
 
       {/* Shipping Address */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Shipping Address</h3>
+        <h3 className="text-lg font-semibold">Dirección de Envío</h3>
         <div>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="Full Name"
+            placeholder="Nombre Completo"
             className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           />
         </div>
@@ -351,7 +351,7 @@ function CheckoutForm({
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
-            placeholder="Street Address"
+            placeholder="Calle y Número"
             className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           />
         </div>
@@ -361,7 +361,7 @@ function CheckoutForm({
             value={city}
             onChange={(e) => setCity(e.target.value)}
             required
-            placeholder="City"
+            placeholder="Ciudad"
             className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           />
           <input
@@ -369,7 +369,7 @@ function CheckoutForm({
             value={state}
             onChange={(e) => setState(e.target.value)}
             required
-            placeholder="State"
+            placeholder="Estado"
             className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           />
         </div>
@@ -379,7 +379,7 @@ function CheckoutForm({
             value={zip}
             onChange={(e) => setZip(e.target.value)}
             required
-            placeholder="ZIP Code"
+            placeholder="Código Postal"
             className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           />
           <select
@@ -387,30 +387,32 @@ function CheckoutForm({
             onChange={(e) => setCountry(e.target.value)}
             className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           >
-            <option value="US">United States</option>
-            <option value="CA">Canada</option>
-            <option value="GB">United Kingdom</option>
-            <option value="AU">Australia</option>
+            <option value="MX">México</option>
+            <option value="US">Estados Unidos</option>
+            <option value="CA">Canadá</option>
+            <option value="CO">Colombia</option>
+            <option value="AR">Argentina</option>
+            <option value="ES">España</option>
           </select>
         </div>
       </div>
 
       {/* Order Summary */}
       <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
-        <h3 className="font-semibold mb-3">Order Summary</h3>
+        <h3 className="font-semibold mb-3">Resumen del Pedido</h3>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-zinc-400">3D Print ({size}, {material})</span>
-            <span>${price}</span>
+            <span className="text-zinc-400">Impresión 3D ({size}, {material})</span>
+            <span>${price} USD</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-400">Shipping</span>
-            <span className="text-[#04ACC8]">FREE</span>
+            <span className="text-zinc-400">Envío</span>
+            <span className="text-[#04ACC8]">GRATIS</span>
           </div>
           <div className="border-t border-zinc-700 pt-2 mt-2">
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span className="text-[#04ACC8]">${price}</span>
+              <span className="text-[#04ACC8]">${price} USD</span>
             </div>
           </div>
         </div>
@@ -429,10 +431,10 @@ function CheckoutForm({
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              Processing...
+              Procesando...
             </>
           ) : (
-            `Pay $${price} with Card`
+            `Pagar $${price} USD con Tarjeta`
           )}
         </button>
         <button
@@ -441,7 +443,7 @@ function CheckoutForm({
           disabled={isProcessing || !email || !name || !address}
           className="w-full flex items-center justify-center gap-2 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-4 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Pay with PayPal
+          Pagar con PayPal
         </button>
         <button
           type="button"
@@ -449,13 +451,13 @@ function CheckoutForm({
           disabled={isProcessing}
           className="w-full text-zinc-400 hover:text-white transition py-2 disabled:opacity-50"
         >
-          ← Back to customization
+          ← Volver a personalización
         </button>
       </div>
 
       {/* Test Card Info */}
       <div className="text-xs text-zinc-500 text-center">
-        <p>Test mode: Use card number 4242 4242 4242 4242</p>
+        <p>Modo prueba: Usa el número de tarjeta 4242 4242 4242 4242</p>
       </div>
     </form>
   );

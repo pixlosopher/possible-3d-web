@@ -17,13 +17,13 @@ export default function Home() {
             </div>
             <div className="hidden md:flex items-center gap-8">
               <Link href="/create" className="text-zinc-300 hover:text-white transition">
-                Crear / Create
+                Crear
               </Link>
               <Link href="/pricing" className="text-zinc-300 hover:text-white transition">
-                Precios / Pricing
+                Precios
               </Link>
               <Link href="/artists" className="text-zinc-300 hover:text-white transition">
-                Artistas
+                Para Artistas
               </Link>
               <Link href="/contact" className="text-zinc-300 hover:text-white transition">
                 Contacto
@@ -47,11 +47,11 @@ export default function Home() {
             <span className="text-[#04ACC8] text-sm font-medium">IA + Impresión 3D</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Take Your{" "}
+            Toma Tus{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#04ACC8] to-[#9AC32E]">
               IDEAS
             </span>{" "}
-            Seriously
+            En Serio
           </h1>
           <p className="text-xl text-zinc-400 mb-4 max-w-2xl mx-auto">
             Tomamos tu idea y le damos forma

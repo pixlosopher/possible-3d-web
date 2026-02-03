@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Printer, Mail, MessageSquare, Send, Check } from "lucide-react";
+import { Printer, Mail, MessageSquare, Send, Check, MapPin, Phone } from "lucide-react";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -32,15 +32,15 @@ export default function ContactPage() {
           <div className="w-16 h-16 bg-[#04ACC8]/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="w-8 h-8 text-[#04ACC8]" />
           </div>
-          <h1 className="text-3xl font-bold mb-4">Message Sent!</h1>
+          <h1 className="text-3xl font-bold mb-4">¡Mensaje Enviado!</h1>
           <p className="text-zinc-400 mb-8">
-            Thank you for reaching out. We&apos;ll get back to you within 24 hours.
+            Gracias por contactarnos. Te responderemos dentro de las próximas 24 horas.
           </p>
           <Link
             href="/"
             className="inline-flex items-center gap-2 bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold px-6 py-3 rounded-full transition"
           >
-            Back to Home
+            Volver al Inicio
           </Link>
         </div>
       </div>
@@ -61,23 +61,23 @@ export default function ContactPage() {
             </Link>
             <div className="hidden md:flex items-center gap-8">
               <Link href="/create" className="text-zinc-300 hover:text-white transition">
-                Create
+                Crear
               </Link>
               <Link href="/pricing" className="text-zinc-300 hover:text-white transition">
-                Pricing
+                Precios
               </Link>
               <Link href="/artists" className="text-zinc-300 hover:text-white transition">
-                For Artists
+                Para Artistas
               </Link>
               <Link href="/contact" className="text-[#04ACC8] font-medium">
-                Contact
+                Contacto
               </Link>
             </div>
             <Link
               href="/create"
               className="bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold px-4 py-2 rounded-full transition"
             >
-              Start Creating
+              Comenzar
             </Link>
           </div>
         </div>
@@ -87,9 +87,9 @@ export default function ContactPage() {
       <main className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Get in Touch</h1>
+            <h1 className="text-4xl font-bold mb-4">Contáctanos</h1>
             <p className="text-xl text-zinc-400">
-              Have a question or want to discuss a custom project? We&apos;d love to hear from you.
+              ¿Tienes una pregunta o quieres discutir un proyecto personalizado? Nos encantaría saber de ti.
             </p>
           </div>
 
@@ -98,22 +98,22 @@ export default function ContactPage() {
               <div className="w-12 h-12 bg-[#04ACC8]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-6 h-6 text-[#04ACC8]" />
               </div>
-              <h3 className="font-semibold mb-2">Email Us</h3>
+              <h3 className="font-semibold mb-2">Escríbenos</h3>
               <p className="text-zinc-400 text-sm">possibleidgdl@gmail.com</p>
             </div>
             <div className="bg-zinc-800/30 border border-zinc-700/50 rounded-xl p-6 text-center">
               <div className="w-12 h-12 bg-[#04ACC8]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageSquare className="w-6 h-6 text-[#04ACC8]" />
+                <MapPin className="w-6 h-6 text-[#04ACC8]" />
               </div>
-              <h3 className="font-semibold mb-2">Response Time</h3>
-              <p className="text-zinc-400 text-sm">Within 24 hours</p>
+              <h3 className="font-semibold mb-2">Ubicación</h3>
+              <p className="text-zinc-400 text-sm">Guadalajara, Jalisco, México</p>
             </div>
             <div className="bg-zinc-800/30 border border-zinc-700/50 rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Printer className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 bg-[#9AC32E]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="w-6 h-6 text-[#9AC32E]" />
               </div>
-              <h3 className="font-semibold mb-2">Artist Consulting</h3>
-              <p className="text-zinc-400 text-sm">Custom projects welcome</p>
+              <h3 className="font-semibold mb-2">Tiempo de Respuesta</h3>
+              <p className="text-zinc-400 text-sm">Dentro de 24 horas</p>
             </div>
           </div>
 
@@ -122,7 +122,7 @@ export default function ContactPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-zinc-400 mb-2">
-                    Your Name
+                    Tu Nombre
                   </label>
                   <input
                     type="text"
@@ -131,13 +131,13 @@ export default function ContactPage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     required
-                    placeholder="John Doe"
+                    placeholder="Juan Pérez"
                     className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-zinc-400 mb-2">
-                    Email Address
+                    Correo Electrónico
                   </label>
                   <input
                     type="email"
@@ -146,7 +146,7 @@ export default function ContactPage() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     required
-                    placeholder="you@example.com"
+                    placeholder="tu@correo.com"
                     className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
                   />
                 </div>
@@ -154,14 +154,14 @@ export default function ContactPage() {
 
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">
-                  What can we help you with?
+                  ¿En qué podemos ayudarte?
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { value: "general", label: "General Question" },
-                    { value: "order", label: "Order Support" },
-                    { value: "artist", label: "Artist Consulting" },
-                    { value: "custom", label: "Custom Project" },
+                    { value: "general", label: "Pregunta General" },
+                    { value: "order", label: "Soporte de Pedido" },
+                    { value: "artist", label: "Consultoría Artista" },
+                    { value: "custom", label: "Proyecto Personalizado" },
                   ].map((option) => (
                     <button
                       key={option.value}
@@ -183,7 +183,7 @@ export default function ContactPage() {
 
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">
-                  Message
+                  Mensaje
                 </label>
                 <textarea
                   value={formData.message}
@@ -192,7 +192,7 @@ export default function ContactPage() {
                   }
                   required
                   rows={5}
-                  placeholder="Tell us more about your inquiry..."
+                  placeholder="Cuéntanos más sobre tu consulta..."
                   className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8] resize-none"
                 />
               </div>
@@ -203,11 +203,11 @@ export default function ContactPage() {
                 className="w-full flex items-center justify-center gap-2 bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold py-4 rounded-xl transition disabled:opacity-50"
               >
                 {isSubmitting ? (
-                  "Sending..."
+                  "Enviando..."
                 ) : (
                   <>
                     <Send className="w-5 h-5" />
-                    Send Message
+                    Enviar Mensaje
                   </>
                 )}
               </button>

@@ -22,7 +22,7 @@ function LoadingFallback() {
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-black text-white flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin w-12 h-12 border-4 border-[#04ACC8] border-t-transparent rounded-full mx-auto mb-4" />
-        <p className="text-zinc-400">Loading...</p>
+        <p className="text-zinc-400">Cargando...</p>
       </div>
     </div>
   );
@@ -52,13 +52,13 @@ function OrderSuccessContent() {
       const response = await fetch(`${API_URL}/api/order/${orderId}`);
 
       if (!response.ok) {
-        throw new Error("Failed to fetch order details");
+        throw new Error("Error al obtener los detalles del pedido");
       }
 
       const data = await response.json();
       setOrder(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load order");
+      setError(err instanceof Error ? err.message : "Error al cargar el pedido");
     } finally {
       setLoading(false);
     }
@@ -85,13 +85,13 @@ function OrderSuccessContent() {
         {loading ? (
           <div className="text-center">
             <div className="animate-spin w-12 h-12 border-4 border-[#04ACC8] border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-zinc-400">Loading order details...</p>
+            <p className="text-zinc-400">Cargando detalles del pedido...</p>
           </div>
         ) : error ? (
           <div className="text-center">
             <div className="text-red-400 mb-4">{error}</div>
             <Link href="/" className="text-[#04ACC8] hover:text-emerald-300">
-              Return to home
+              Volver al inicio
             </Link>
           </div>
         ) : (
@@ -104,23 +104,23 @@ function OrderSuccessContent() {
             </div>
 
             {/* Success Message */}
-            <h1 className="text-4xl font-bold mb-4">Order Confirmed!</h1>
+            <h1 className="text-4xl font-bold mb-4">¡Pedido Confirmado!</h1>
             <p className="text-zinc-400 text-lg mb-8">
-              Thank you for your order. We&apos;ve received your payment and will start
-              processing your 3D print right away.
+              Gracias por tu pedido. Hemos recibido tu pago y comenzaremos
+              a procesar tu impresión 3D de inmediato.
             </p>
 
             {/* Order Details Card */}
             {order && (
               <div className="bg-zinc-800/50 border border-zinc-700 rounded-2xl p-6 text-left mb-8">
-                <h2 className="text-lg font-semibold mb-4">Order Details</h2>
+                <h2 className="text-lg font-semibold mb-4">Detalles del Pedido</h2>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-zinc-400">Order ID</span>
+                    <span className="text-zinc-400">ID del Pedido</span>
                     <span className="font-mono">{order.id}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-zinc-400">Size</span>
+                    <span className="text-zinc-400">Tamaño</span>
                     <span className="capitalize">{order.size}</span>
                   </div>
                   <div className="flex justify-between">
@@ -128,14 +128,14 @@ function OrderSuccessContent() {
                     <span className="uppercase">{order.material}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-zinc-400">Email</span>
+                    <span className="text-zinc-400">Correo</span>
                     <span>{order.customer_email}</span>
                   </div>
                   <div className="border-t border-zinc-700 pt-3 mt-3">
                     <div className="flex justify-between font-bold">
-                      <span>Total Paid</span>
+                      <span>Total Pagado</span>
                       <span className="text-[#04ACC8]">
-                        ${(order.price_cents / 100).toFixed(2)}
+                        ${(order.price_cents / 100).toFixed(2)} USD
                       </span>
                     </div>
                   </div>
@@ -145,7 +145,7 @@ function OrderSuccessContent() {
 
             {/* Timeline */}
             <div className="bg-zinc-800/50 border border-zinc-700 rounded-2xl p-6 text-left mb-8">
-              <h2 className="text-lg font-semibold mb-4">What&apos;s Next?</h2>
+              <h2 className="text-lg font-semibold mb-4">¿Qué Sigue?</h2>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
@@ -154,8 +154,8 @@ function OrderSuccessContent() {
                     </div>
                   </div>
                   <div>
-                    <p className="font-medium">Order Confirmed</p>
-                    <p className="text-sm text-zinc-400">Your payment has been processed</p>
+                    <p className="font-medium">Pedido Confirmado</p>
+                    <p className="text-sm text-zinc-400">Tu pago ha sido procesado</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -165,8 +165,8 @@ function OrderSuccessContent() {
                     </div>
                   </div>
                   <div>
-                    <p className="font-medium text-zinc-400">Printing</p>
-                    <p className="text-sm text-zinc-500">Your model is being 3D printed (2-5 days)</p>
+                    <p className="font-medium text-zinc-400">Imprimiendo</p>
+                    <p className="text-sm text-zinc-500">Tu modelo está siendo impreso en 3D (2-5 días)</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -176,8 +176,8 @@ function OrderSuccessContent() {
                     </div>
                   </div>
                   <div>
-                    <p className="font-medium text-zinc-400">Shipping</p>
-                    <p className="text-sm text-zinc-500">Shipped to your address (3-7 days)</p>
+                    <p className="font-medium text-zinc-400">Envío</p>
+                    <p className="text-sm text-zinc-500">Enviado a tu dirección (3-7 días)</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -187,8 +187,8 @@ function OrderSuccessContent() {
                     </div>
                   </div>
                   <div>
-                    <p className="font-medium text-zinc-400">Updates</p>
-                    <p className="text-sm text-zinc-500">We&apos;ll email you with tracking info</p>
+                    <p className="font-medium text-zinc-400">Actualizaciones</p>
+                    <p className="text-sm text-zinc-500">Te enviaremos un correo con información de rastreo</p>
                   </div>
                 </div>
               </div>
@@ -200,13 +200,13 @@ function OrderSuccessContent() {
                 href="/create"
                 className="block w-full bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold py-4 rounded-xl transition text-center"
               >
-                Create Another Model
+                Crear Otro Modelo
               </Link>
               <Link
                 href="/"
                 className="block w-full text-zinc-400 hover:text-white transition py-2 text-center"
               >
-                Return to Home
+                Volver al Inicio
               </Link>
             </div>
           </div>

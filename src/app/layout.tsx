@@ -7,12 +7,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "POSSIBLE - AI 3D Printing | Impresión 3D con IA",
-  description: "Toma tu idea y dale forma. AI-powered 3D printing service. Diseño, Modelado, Prototipado Rápido y Impresión 3D en Guadalajara, México.",
-  keywords: ["3D printing", "AI", "impresión 3D", "prototipado rápido", "Guadalajara", "México", "diseño industrial", "CNC", "láser"],
+  title: "POSSIBLE - Impresión 3D con IA | Toma Tus Ideas En Serio",
+  description: "Tomamos tu idea y le damos forma. Servicio de impresión 3D impulsado por IA. Diseño Industrial, Modelado 3D, Prototipado Rápido e Impresión 3D en Guadalajara, México.",
+  keywords: ["impresión 3D", "IA", "inteligencia artificial", "prototipado rápido", "Guadalajara", "México", "diseño industrial", "CNC", "corte láser", "modelado 3D"],
   openGraph: {
-    title: "POSSIBLE - Take Your IDEAS Seriously",
-    description: "AI-powered 3D printing. From concept to physical reality. Guadalajara, México.",
+    title: "POSSIBLE - Toma Tus Ideas En Serio",
+    description: "Impresión 3D impulsada por IA. Del concepto a la realidad física. Guadalajara, México.",
     type: "website",
   },
 };
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="es" className="dark">
       <body className={`${inter.className} antialiased bg-black text-white`}>
         {children}
       </body>

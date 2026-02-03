@@ -3,55 +3,55 @@ import { Printer, ArrowRight, Check } from "lucide-react";
 
 const PRICING_DATA = [
   {
-    size: "Small",
+    size: "Pequeño",
     height: "50mm",
-    description: "Perfect for desk figurines",
+    description: "Perfecto para figuras de escritorio",
     materials: [
-      { name: "PLA Plastic", price: 29, features: ["Durable", "Matte finish", "Ships in 5-7 days"] },
-      { name: "Premium Resin", price: 39, features: ["High detail", "Smooth finish", "Ships in 7-10 days"] },
+      { name: "Plástico PLA", price: 29, features: ["Duradero", "Acabado mate", "Envío en 5-7 días"] },
+      { name: "Resina Premium", price: 39, features: ["Alto detalle", "Acabado liso", "Envío en 7-10 días"] },
     ],
   },
   {
-    size: "Medium",
+    size: "Mediano",
     height: "75mm",
-    description: "Ideal for collectibles",
+    description: "Ideal para coleccionables",
     popular: true,
     materials: [
-      { name: "PLA Plastic", price: 49, features: ["Durable", "Matte finish", "Ships in 5-7 days"] },
-      { name: "Premium Resin", price: 59, features: ["High detail", "Smooth finish", "Ships in 7-10 days"] },
+      { name: "Plástico PLA", price: 49, features: ["Duradero", "Acabado mate", "Envío en 5-7 días"] },
+      { name: "Resina Premium", price: 59, features: ["Alto detalle", "Acabado liso", "Envío en 7-10 días"] },
     ],
   },
   {
-    size: "Large",
+    size: "Grande",
     height: "100mm",
-    description: "Statement pieces",
+    description: "Piezas de exhibición",
     materials: [
-      { name: "PLA Plastic", price: 69, features: ["Durable", "Matte finish", "Ships in 7-10 days"] },
-      { name: "Premium Resin", price: 89, features: ["High detail", "Smooth finish", "Ships in 10-14 days"] },
+      { name: "Plástico PLA", price: 69, features: ["Duradero", "Acabado mate", "Envío en 7-10 días"] },
+      { name: "Resina Premium", price: 89, features: ["Alto detalle", "Acabado liso", "Envío en 10-14 días"] },
     ],
   },
 ];
 
 const FAQ = [
   {
-    q: "How does AI-generated 3D printing work?",
-    a: "Simply describe what you want to create in plain English. Our AI generates a unique 2D concept, converts it to a 3D model, and we professionally print and ship it to you.",
+    q: "¿Cómo funciona la impresión 3D con IA?",
+    a: "Simplemente describe lo que quieres crear en lenguaje natural. Nuestra IA genera un concepto 2D único, lo convierte en un modelo 3D, y lo imprimimos y enviamos profesionalmente a tu dirección.",
   },
   {
-    q: "What materials do you use?",
-    a: "We offer PLA plastic for durable, affordable prints, and premium resin for high-detail pieces with smooth finishes. Both are safe and long-lasting.",
+    q: "¿Qué materiales utilizan?",
+    a: "Ofrecemos plástico PLA para impresiones duraderas y económicas, y resina premium para piezas de alto detalle con acabados lisos. Ambos son seguros y duraderos.",
   },
   {
-    q: "How long does shipping take?",
-    a: "Production takes 3-5 business days. Shipping is free and takes 5-7 additional days within the US. International shipping is available at checkout.",
+    q: "¿Cuánto tarda el envío?",
+    a: "La producción toma 3-5 días hábiles. El envío es gratuito en México y toma 5-7 días adicionales. Envíos internacionales disponibles al finalizar la compra.",
   },
   {
-    q: "Can I get a custom size or material?",
-    a: "Yes! Contact us for custom orders including larger sizes, special materials, or bulk quantities. We also offer consulting for artists.",
+    q: "¿Puedo obtener un tamaño o material personalizado?",
+    a: "¡Sí! Contáctanos para pedidos personalizados incluyendo tamaños más grandes, materiales especiales, o cantidades al mayoreo. También ofrecemos consultoría para artistas.",
   },
   {
-    q: "What if I'm not satisfied?",
-    a: "We offer a 100% satisfaction guarantee. If your print doesn't meet expectations, we'll remake it or refund your order.",
+    q: "¿Qué pasa si no estoy satisfecho?",
+    a: "Ofrecemos garantía de satisfacción 100%. Si tu impresión no cumple tus expectativas, la rehacemos o te reembolsamos tu pedido.",
   },
 ];
 
@@ -70,23 +70,23 @@ export default function PricingPage() {
             </Link>
             <div className="hidden md:flex items-center gap-8">
               <Link href="/create" className="text-zinc-300 hover:text-white transition">
-                Create
+                Crear
               </Link>
               <Link href="/pricing" className="text-[#04ACC8] font-medium">
-                Pricing
+                Precios
               </Link>
               <Link href="/artists" className="text-zinc-300 hover:text-white transition">
-                For Artists
+                Para Artistas
               </Link>
               <Link href="/contact" className="text-zinc-300 hover:text-white transition">
-                Contact
+                Contacto
               </Link>
             </div>
             <Link
               href="/create"
               className="bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold px-4 py-2 rounded-full transition"
             >
-              Start Creating
+              Comenzar
             </Link>
           </div>
         </div>
@@ -95,10 +95,10 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="pt-16 pb-12 px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Simple, Transparent Pricing
+          Precios Simples y Transparentes
         </h1>
         <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-          No subscriptions. No hidden fees. Pay per print with free shipping included.
+          Sin suscripciones. Sin costos ocultos. Paga por impresión con envío gratis incluido.
         </p>
       </section>
 
@@ -117,7 +117,7 @@ export default function PricingPage() {
               >
                 {tier.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#04ACC8] text-black text-xs font-semibold px-3 py-1 rounded-full">
-                    Most Popular
+                    Más Popular
                   </div>
                 )}
                 <div className="text-center mb-6">
@@ -136,7 +136,7 @@ export default function PricingPage() {
                     >
                       <div className="flex justify-between items-center mb-2">
                         <span className="font-medium">{material.name}</span>
-                        <span className="text-2xl font-bold">${material.price}</span>
+                        <span className="text-2xl font-bold">${material.price} USD</span>
                       </div>
                       <ul className="space-y-1">
                         {material.features.map((feature) => (
@@ -161,7 +161,7 @@ export default function PricingPage() {
                       : "bg-zinc-700 hover:bg-zinc-600 text-white"
                   }`}
                 >
-                  Create {tier.size} Print
+                  Crear Impresión {tier.size}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -173,13 +173,13 @@ export default function PricingPage() {
       {/* What's Included */}
       <section className="py-12 px-4 bg-zinc-900/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8">Every Order Includes</h2>
+          <h2 className="text-3xl font-bold mb-8">Cada Pedido Incluye</h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { label: "AI Generation", desc: "Unlimited revisions" },
-              { label: "3D Preview", desc: "View before ordering" },
-              { label: "Free Shipping", desc: "US orders" },
-              { label: "Satisfaction Guarantee", desc: "100% money back" },
+              { label: "Generación IA", desc: "Revisiones ilimitadas" },
+              { label: "Vista Previa 3D", desc: "Visualiza antes de ordenar" },
+              { label: "Envío Gratis", desc: "Pedidos en México" },
+              { label: "Garantía de Satisfacción", desc: "100% devolución" },
             ].map((item) => (
               <div key={item.label} className="text-center">
                 <div className="w-12 h-12 bg-[#04ACC8]/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -197,7 +197,7 @@ export default function PricingPage() {
       <section className="py-16 px-4">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">
-            Frequently Asked Questions
+            Preguntas Frecuentes
           </h2>
           <div className="space-y-4">
             {FAQ.map((item, i) => (
@@ -216,15 +216,15 @@ export default function PricingPage() {
       {/* CTA */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto text-center bg-gradient-to-r from-[#04ACC8]/20 to-[#9AC32E]/20 border border-[#04ACC8]/30 rounded-3xl p-12">
-          <h2 className="text-3xl font-bold mb-4">Ready to Create?</h2>
+          <h2 className="text-3xl font-bold mb-4">¿Listo para Crear?</h2>
           <p className="text-zinc-400 mb-8">
-            Turn your imagination into reality. Free preview, no commitment.
+            Convierte tu imaginación en realidad. Vista previa gratis, sin compromiso.
           </p>
           <Link
             href="/create"
             className="inline-flex items-center gap-2 bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold px-8 py-4 rounded-full text-lg transition"
           >
-            Start Creating Now
+            Comenzar Ahora
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
