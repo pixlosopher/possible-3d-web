@@ -3,6 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* PossibleID Brand Colors */
+  --possible-cyan: #04ACC8;
+  --possible-cyan-light: #2BC4DD;
+  --possible-green: #9AC32E;
+  --possible-green-light: #BCDC6C;
+  --possible-dark: #1a1a1a;
+  --possible-blue: #0066B3;
 }
 
 @theme inline {
@@ -10,6 +18,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Brand color utilities */
+  --color-possible-cyan: var(--possible-cyan);
+  --color-possible-green: var(--possible-green);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +35,16 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* PossibleID Brand Gradient */
+.gradient-possible {
+  background: linear-gradient(135deg, var(--possible-cyan) 0%, var(--possible-green) 100%);
+}
+
+.text-gradient-possible {
+  background: linear-gradient(135deg, var(--possible-cyan) 0%, var(--possible-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
