@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Printer, ArrowLeft, ShoppingCart } from "lucide-react";
 import Generator from "@/components/Generator";
@@ -56,10 +57,14 @@ export default function CreatePage() {
       <header className="border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#04ACC8] to-[#9AC32E] rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-sm">P</span>
-              </div>
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
+              <Image
+                src="/images/possible-logo.png"
+                alt="POSSIBLE Logo"
+                width={32}
+                height={27}
+                className="object-contain"
+              />
               <span className="text-xl font-bold">POSSIBLE</span>
             </Link>
             <Link

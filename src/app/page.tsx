@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Sparkles, Printer, Truck, ArrowRight, Users, Layers, Cpu, Box, Instagram, Youtube, Facebook } from "lucide-react";
 
 export default function Home() {
@@ -8,13 +9,17 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-900/80 backdrop-blur-sm border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              {/* POSSIBLE Logo */}
-              <div className="w-10 h-10 bg-gradient-to-br from-[#04ACC8] to-[#9AC32E] rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-xl">P</span>
-              </div>
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
+              <Image
+                src="/images/possible-logo.png"
+                alt="POSSIBLE Logo"
+                width={40}
+                height={34}
+                className="object-contain"
+                priority
+              />
               <span className="text-xl font-bold">POSSIBLE</span>
-            </div>
+            </Link>
             <div className="hidden md:flex items-center gap-8">
               <Link href="/create" className="text-zinc-300 hover:text-white transition">
                 Crear
@@ -339,9 +344,13 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#04ACC8] to-[#9AC32E] rounded-lg flex items-center justify-center">
-                  <span className="text-black font-bold text-sm">P</span>
-                </div>
+                <Image
+                  src="/images/possible-logo.png"
+                  alt="POSSIBLE Logo"
+                  width={32}
+                  height={27}
+                  className="object-contain"
+                />
                 <span className="text-lg font-bold">POSSIBLE</span>
               </div>
               <p className="text-zinc-500 text-sm mb-4">
