@@ -48,7 +48,7 @@ export default function PricingSelector({
       if (!options) return;
 
       const selectedMat = options.materials[material];
-      const needsColor = selectedMat && selectedMat.colors.length > 0 && !selectedMat.supports_full_color;
+      const needsColor = selectedMat && selectedMat.colors && selectedMat.colors.length > 0 && !selectedMat.supports_full_color;
 
       // If material needs color but none selected, don't calculate
       if (needsColor && !color) {
@@ -74,11 +74,11 @@ export default function PricingSelector({
     if (!options) return;
     const selectedMat = options.materials[material];
     if (selectedMat) {
-      if (selectedMat.colors.length === 0 || selectedMat.supports_full_color) {
+      if (!selectedMat.colors || selectedMat.colors.length === 0 || selectedMat.supports_full_color) {
         setColor(undefined);
       } else if (color && !selectedMat.colors.find(c => c.key === color)) {
         setColor(selectedMat.colors[0]?.key);
-      } else if (!color && selectedMat.colors.length > 0) {
+      } else if (!color && selectedMat.colors && selectedMat.colors.length > 0) {
         setColor(selectedMat.colors[0]?.key);
       }
     }
