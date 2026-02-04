@@ -35,16 +35,20 @@ export default function CreatePage() {
     setStep("customize");
   };
 
+  const [customHeight, setCustomHeight] = useState<number | undefined>(undefined);
+
   const handlePricingSelect = useCallback((
     size: string,
     material: string,
     color: string | undefined,
-    priceCents: number
+    priceCents: number,
+    customHeightMm?: number
   ) => {
     setSelectedSize(size);
     setSelectedMaterial(material);
     setSelectedColor(color);
     setPrice(Math.round(priceCents / 100)); // Convert cents to dollars
+    setCustomHeight(customHeightMm);
   }, []);
 
   const handleCountryChange = useCallback((country: string) => {
@@ -246,6 +250,7 @@ export default function CreatePage() {
                   material={selectedMaterial}
                   color={selectedColor}
                   initialCountry={selectedCountry}
+                  customHeight={customHeight}
                   onBack={() => setStep("customize")}
                 />
               </div>
@@ -282,6 +287,7 @@ function CheckoutForm({
   material,
   color,
   initialCountry,
+  customHeight,
   onBack,
 }: {
   jobId: string;
@@ -289,6 +295,7 @@ function CheckoutForm({
   material: string;
   color?: string;
   initialCountry: string;
+  customHeight?: number;
   onBack: () => void;
 }) {
   const [email, setEmail] = useState("");
@@ -317,12 +324,20 @@ function CheckoutForm({
     async function loadPricing() {
       setPriceLoading(true);
       try {
-        const data = await getRegionalPricing(country);
-        setPricing(data);
-        const sizeData = data.sizes.find(s => s.key === size);
-        if (sizeData) {
-          setCurrentPrice(Math.round(sizeData.price_cents / 100));
-          setLocalCurrency(sizeData.local_currency);
+        // Handle custom size
+        if (size === "custom" && customHeight) {
+          const { calculateCustomHeightPrice } = await import("@/lib/api");
+          const customPriceData = await calculateCustomHeightPrice(customHeight, country);
+          setCurrentPrice(Math.round(customPriceData.price_cents / 100));
+          setLocalCurrency(null);
+        } else {
+          const data = await getRegionalPricing(country);
+          setPricing(data);
+          const sizeData = data.sizes.find(s => s.key === size);
+          if (sizeData) {
+            setCurrentPrice(Math.round(sizeData.price_cents / 100));
+            setLocalCurrency(sizeData.local_currency);
+          }
         }
       } catch (err) {
         console.error("Error loading pricing:", err);
@@ -330,19 +345,27 @@ function CheckoutForm({
       setPriceLoading(false);
     }
     loadPricing();
-  }, []);
+  }, [size, customHeight, country]);
 
   // Update price when country changes
   const handleCountryChange = async (newCountry: string) => {
     setCountry(newCountry);
     setPriceLoading(true);
     try {
-      const data = await getRegionalPricing(newCountry);
-      setPricing(data);
-      const sizeData = data.sizes.find(s => s.key === size);
-      if (sizeData) {
-        setCurrentPrice(Math.round(sizeData.price_cents / 100));
-        setLocalCurrency(sizeData.local_currency);
+      // Handle custom size
+      if (size === "custom" && customHeight) {
+        const { calculateCustomHeightPrice } = await import("@/lib/api");
+        const customPriceData = await calculateCustomHeightPrice(customHeight, newCountry);
+        setCurrentPrice(Math.round(customPriceData.price_cents / 100));
+        setLocalCurrency(null);
+      } else {
+        const data = await getRegionalPricing(newCountry);
+        setPricing(data);
+        const sizeData = data.sizes.find(s => s.key === size);
+        if (sizeData) {
+          setCurrentPrice(Math.round(sizeData.price_cents / 100));
+          setLocalCurrency(sizeData.local_currency);
+        }
       }
     } catch (err) {
       console.error("Error updating pricing:", err);
@@ -418,6 +441,11 @@ function CheckoutForm({
 
   // Format size name for display
   const getSizeName = (key: string) => {
+    // Handle custom size
+    if (key === "custom" && customHeight) {
+      return `Personalizado (${customHeight}mm)`;
+    }
+
     const sizeData = pricing?.sizes.find(s => s.key === key);
     if (sizeData) {
       return `${sizeData.name_es} (${sizeData.height_mm}mm)`;

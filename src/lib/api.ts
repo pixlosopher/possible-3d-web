@@ -415,3 +415,50 @@ export async function calculateRegionalPrice(
 
   return response.json();
 }
+
+// ============ Custom Height Pricing ============
+
+export interface CustomHeightPrice {
+  height_mm: number;
+  country_code: string;
+  region: {
+    key: string;
+    name: string;
+    name_es: string;
+  };
+  price_cents: number;
+  price_usd: number;
+  price_display: string;
+  is_custom: boolean;
+  constraints: {
+    min_height_mm: number;
+    max_height_mm: number;
+  };
+}
+
+/**
+ * Calculate price for a custom height
+ *
+ * @param heightMm - Height in millimeters (30-300mm)
+ * @param countryCode - ISO country code (e.g., "MX", "US")
+ */
+export async function calculateCustomHeightPrice(
+  heightMm: number,
+  countryCode: string = "MX"
+): Promise<CustomHeightPrice> {
+  const response = await fetch(`${API_BASE_URL}/api/pricing/custom`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      height_mm: heightMm,
+      country_code: countryCode,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to calculate custom height price');
+  }
+
+  return response.json();
+}
