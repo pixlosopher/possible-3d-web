@@ -165,10 +165,10 @@ export default function OrderDetailPage() {
 
   const stage: Stage = getStage();
 
-  // Build mesh URL for viewer
+  // Build mesh URL for viewer - prioritize local path to avoid CORS issues
   const getMeshUrl = () => {
-    if (job?.mesh_url) return job.mesh_url;
     if (job?.mesh_path) return `${API_URL}${job.mesh_path}`;
+    if (job?.mesh_url) return job.mesh_url;
     return null;
   };
 
