@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { ArrowLeft, ShoppingCart, AlertCircle, Info } from "lucide-react";
+import { ArrowLeft, ShoppingCart, AlertCircle, Info, Globe, Loader2 } from "lucide-react";
 import Generator from "@/components/Generator";
 import PricingSelector from "@/components/PricingSelector";
-import { JobStatus, createCheckout, getImageUrl } from "@/lib/api";
+import { JobStatus, createCheckout, getImageUrl, getRegionalPricing, RegionalPricing } from "@/lib/api";
 
 // Dynamic import for 3D preview (client-side only)
 const ModelPreview = dynamic(() => import("@/components/ModelPreview"), {
@@ -24,27 +24,32 @@ type Step = "generate" | "customize" | "checkout";
 export default function CreatePage() {
   const [step, setStep] = useState<Step>("generate");
   const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string>("medium");
+  const [selectedSize, setSelectedSize] = useState<string>("small");
   const [selectedMaterial, setSelectedMaterial] = useState<string>("plastic_white");
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
-  const [price, setPrice] = useState(52); // Default price for plastic_white + medium
+  const [selectedCountry, setSelectedCountry] = useState<string>("MX");
+  const [price, setPrice] = useState(75); // Default LATAM small price
 
   const handleGenerationComplete = (status: JobStatus) => {
     setJobStatus(status);
     setStep("customize");
   };
 
-  const handlePricingSelect = (
+  const handlePricingSelect = useCallback((
     size: string,
     material: string,
     color: string | undefined,
-    newPrice: number
+    priceCents: number
   ) => {
     setSelectedSize(size);
     setSelectedMaterial(material);
     setSelectedColor(color);
-    setPrice(Math.round(newPrice / 100)); // Convert cents to dollars
-  };
+    setPrice(Math.round(priceCents / 100)); // Convert cents to dollars
+  }, []);
+
+  const handleCountryChange = useCallback((country: string) => {
+    setSelectedCountry(country);
+  }, []);
 
   const handleProceedToCheckout = () => {
     setStep("checkout");
@@ -171,13 +176,13 @@ export default function CreatePage() {
 
             {jobStatus && (
               <div className="mt-4 bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
-                <h3 className="text-sm font-medium text-zinc-400 mb-2">Tu Diseno</h3>
+                <h3 className="text-sm font-medium text-zinc-400 mb-2">Tu Diseño</h3>
                 <p className="text-white">{jobStatus.description || "Modelo generado"}</p>
                 {isConceptOnly && (
                   <div className="mt-3 flex items-start gap-2 text-xs text-amber-400/80 bg-amber-500/10 rounded-lg p-2">
                     <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     <span>
-                      Este es un concepto 2D. El modelo 3D final se generara despues de confirmar tu compra.
+                      Este es un concepto 2D. El modelo 3D final se generará después de confirmar tu compra.
                     </span>
                   </div>
                 )}
@@ -191,7 +196,7 @@ export default function CreatePage() {
               <div>
                 <h1 className="text-3xl font-bold mb-2">Crea Tu Modelo 3D</h1>
                 <p className="text-zinc-400 mb-8">
-                  Describe lo que quieres crear, y nuestra IA generara un concepto unico para ti.
+                  Describe lo que quieres crear, y nuestra IA generará un concepto único para ti.
                 </p>
                 <Generator onComplete={handleGenerationComplete} />
               </div>
@@ -199,15 +204,17 @@ export default function CreatePage() {
 
             {step === "customize" && (
               <div>
-                <h1 className="text-3xl font-bold mb-2">Personaliza Tu Impresion</h1>
+                <h1 className="text-3xl font-bold mb-2">Personaliza Tu Impresión</h1>
                 <p className="text-zinc-400 mb-8">
-                  Elige el tamano, material y color para tu impresion 3D.
+                  Elige el tamaño y país de envío para tu impresión 3D.
                 </p>
                 <PricingSelector
                   onSelect={handlePricingSelect}
                   selectedSize={selectedSize}
                   selectedMaterial={selectedMaterial}
                   selectedColor={selectedColor || null}
+                  selectedCountry={selectedCountry}
+                  onCountryChange={handleCountryChange}
                 />
                 <div className="mt-6 space-y-3">
                   <button
@@ -231,14 +238,14 @@ export default function CreatePage() {
               <div>
                 <h1 className="text-3xl font-bold mb-2">Completa Tu Pedido</h1>
                 <p className="text-zinc-400 mb-8">
-                  Ingresa tus datos de envio e informacion de pago.
+                  Ingresa tus datos de envío e información de pago.
                 </p>
                 <CheckoutForm
                   jobId={jobStatus?.id || ""}
                   size={selectedSize}
                   material={selectedMaterial}
                   color={selectedColor}
-                  price={price}
+                  initialCountry={selectedCountry}
                   onBack={() => setStep("customize")}
                 />
               </div>
@@ -250,20 +257,38 @@ export default function CreatePage() {
   );
 }
 
+// Countries available for shipping
+const COUNTRIES = [
+  { code: "MX", name: "México", flag: "🇲🇽" },
+  { code: "US", name: "Estados Unidos", flag: "🇺🇸" },
+  { code: "CA", name: "Canadá", flag: "🇨🇦" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴" },
+  { code: "CL", name: "Chile", flag: "🇨🇱" },
+  { code: "BR", name: "Brasil", flag: "🇧🇷" },
+  { code: "PE", name: "Perú", flag: "🇵🇪" },
+  { code: "EC", name: "Ecuador", flag: "🇪🇨" },
+  { code: "UY", name: "Uruguay", flag: "🇺🇾" },
+  { code: "PA", name: "Panamá", flag: "🇵🇦" },
+  { code: "CR", name: "Costa Rica", flag: "🇨🇷" },
+  { code: "GT", name: "Guatemala", flag: "🇬🇹" },
+  { code: "DO", name: "Rep. Dominicana", flag: "🇩🇴" },
+];
+
 // Checkout Form Component
 function CheckoutForm({
   jobId,
   size,
   material,
   color,
-  price,
+  initialCountry,
   onBack,
 }: {
   jobId: string;
   size: string;
   material: string;
   color?: string;
-  price: number;
+  initialCountry: string;
   onBack: () => void;
 }) {
   const [email, setEmail] = useState("");
@@ -272,9 +297,58 @@ function CheckoutForm({
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("MX");
+  const [country, setCountry] = useState(initialCountry);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Regional pricing state
+  const [pricing, setPricing] = useState<RegionalPricing | null>(null);
+  const [priceLoading, setPriceLoading] = useState(true);
+  const [currentPrice, setCurrentPrice] = useState(75);
+  const [localCurrency, setLocalCurrency] = useState<{
+    currency_code: string;
+    symbol: string;
+    amount: number;
+    display: string;
+  } | null>(null);
+
+  // Load pricing when component mounts
+  useEffect(() => {
+    async function loadPricing() {
+      setPriceLoading(true);
+      try {
+        const data = await getRegionalPricing(country);
+        setPricing(data);
+        const sizeData = data.sizes.find(s => s.key === size);
+        if (sizeData) {
+          setCurrentPrice(Math.round(sizeData.price_cents / 100));
+          setLocalCurrency(sizeData.local_currency);
+        }
+      } catch (err) {
+        console.error("Error loading pricing:", err);
+      }
+      setPriceLoading(false);
+    }
+    loadPricing();
+  }, []);
+
+  // Update price when country changes
+  const handleCountryChange = async (newCountry: string) => {
+    setCountry(newCountry);
+    setPriceLoading(true);
+    try {
+      const data = await getRegionalPricing(newCountry);
+      setPricing(data);
+      const sizeData = data.sizes.find(s => s.key === size);
+      if (sizeData) {
+        setCurrentPrice(Math.round(sizeData.price_cents / 100));
+        setLocalCurrency(sizeData.local_currency);
+      }
+    } catch (err) {
+      console.error("Error updating pricing:", err);
+    }
+    setPriceLoading(false);
+  };
 
   const handleStripeCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -296,7 +370,7 @@ function CheckoutForm({
       if (data.checkout_url) {
         window.location.href = data.checkout_url;
       } else {
-        throw new Error("No se recibio URL de pago");
+        throw new Error("No se recibió URL de pago");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error en el pago");
@@ -334,7 +408,7 @@ function CheckoutForm({
       if (data.checkout_url) {
         window.location.href = data.checkout_url;
       } else {
-        throw new Error("No se recibio URL de PayPal");
+        throw new Error("No se recibió URL de PayPal");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error en pago con PayPal");
@@ -342,29 +416,22 @@ function CheckoutForm({
     }
   };
 
-  // Format material name for display
-  const getMaterialName = (key: string) => {
+  // Format size name for display
+  const getSizeName = (key: string) => {
+    const sizeData = pricing?.sizes.find(s => s.key === key);
+    if (sizeData) {
+      return `${sizeData.name_es} (${sizeData.height_mm}mm)`;
+    }
     const names: Record<string, string> = {
-      plastic_white: "Plastico Blanco",
-      plastic_color: "Plastico Color",
-      resin_premium: "Resina Premium",
-      full_color: "Full Color",
-      metal_steel: "Acero Inoxidable",
+      mini: "Mini (50mm)",
+      small: "Pequeño (75mm)",
+      medium: "Mediano (100mm)",
+      large: "Grande (150mm)",
     };
     return names[key] || key;
   };
 
-  // Format size name for display
-  const getSizeName = (key: string) => {
-    const names: Record<string, string> = {
-      mini: "Mini (50mm)",
-      small: "Pequeno (80mm)",
-      medium: "Mediano (120mm)",
-      large: "Grande (180mm)",
-      xl: "XL (250mm)",
-    };
-    return names[key] || key;
-  };
+  const selectedCountryData = COUNTRIES.find(c => c.code === country);
 
   return (
     <form onSubmit={handleStripeCheckout} className="space-y-6">
@@ -379,7 +446,7 @@ function CheckoutForm({
       {/* Email */}
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-2">
-          Correo Electronico
+          Correo Electrónico
         </label>
         <input
           type="email"
@@ -393,7 +460,10 @@ function CheckoutForm({
 
       {/* Shipping Address */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Direccion de Envio</h3>
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <Globe className="w-5 h-5 text-[#04ACC8]" />
+          Dirección de Envío
+        </h3>
         <div>
           <input
             type="text"
@@ -410,7 +480,7 @@ function CheckoutForm({
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
-            placeholder="Calle y Numero"
+            placeholder="Calle y Número"
             className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           />
         </div>
@@ -438,30 +508,35 @@ function CheckoutForm({
             value={zip}
             onChange={(e) => setZip(e.target.value)}
             required
-            placeholder="Codigo Postal"
+            placeholder="Código Postal"
             className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
           />
-          <select
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
-          >
-            <option value="MX">Mexico</option>
-            <option value="US">Estados Unidos</option>
-            <option value="CA">Canada</option>
-            <option value="CO">Colombia</option>
-            <option value="AR">Argentina</option>
-            <option value="CL">Chile</option>
-            <option value="BR">Brasil</option>
-            <option value="ES">Espana</option>
-            <option value="DE">Alemania</option>
-            <option value="FR">Francia</option>
-            <option value="GB">Reino Unido</option>
-            <option value="IT">Italia</option>
-            <option value="JP">Japon</option>
-            <option value="AU">Australia</option>
-          </select>
+          <div className="relative">
+            <select
+              value={country}
+              onChange={(e) => handleCountryChange(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#04ACC8]"
+            >
+              {COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.flag} {c.name}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
+        {pricing && (
+          <p className="text-xs text-zinc-500">
+            {pricing.region.key === "latam"
+              ? "📦 Envío internacional incluido • Entrega en 10-15 días hábiles"
+              : "📦 Envío incluido • Entrega en 7-10 días hábiles"}
+          </p>
+        )}
       </div>
 
       {/* Order Summary */}
@@ -469,27 +544,32 @@ function CheckoutForm({
         <h3 className="font-semibold mb-3">Resumen del Pedido</h3>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-zinc-400">Tamano</span>
+            <span className="text-zinc-400">Tamaño</span>
             <span>{getSizeName(size)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-400">Material</span>
-            <span>{getMaterialName(material)}</span>
+            <span className="text-zinc-400">País de Envío</span>
+            <span>{selectedCountryData?.flag} {selectedCountryData?.name}</span>
           </div>
-          {color && (
-            <div className="flex justify-between">
-              <span className="text-zinc-400">Color</span>
-              <span className="capitalize">{color}</span>
-            </div>
-          )}
           <div className="flex justify-between">
-            <span className="text-zinc-400">Envio Internacional</span>
-            <span className="text-[#04ACC8]">GRATIS</span>
+            <span className="text-zinc-400">Envío Internacional</span>
+            <span className="text-[#04ACC8]">INCLUIDO</span>
           </div>
           <div className="border-t border-zinc-700 pt-2 mt-2">
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span className="text-[#04ACC8]">${price} USD</span>
+              {priceLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin text-[#04ACC8]" />
+              ) : (
+                <div className="text-right">
+                  <span className="text-[#04ACC8]">${currentPrice} USD</span>
+                  {localCurrency && (
+                    <div className="text-xs text-zinc-400 font-normal">
+                      ≈ {localCurrency.display}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -500,8 +580,8 @@ function CheckoutForm({
         <div className="flex items-start gap-2">
           <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <span>
-            Al completar el pago, generaremos tu modelo 3D personalizado y lo enviaremos a produccion.
-            Recibiras actualizaciones por correo electronico.
+            Al completar el pago, generaremos tu modelo 3D personalizado y lo enviaremos a producción.
+            Recibirás actualizaciones por correo electrónico.
           </span>
         </div>
       </div>
@@ -510,7 +590,7 @@ function CheckoutForm({
       <div className="space-y-3">
         <button
           type="submit"
-          disabled={isProcessing || !email || !name || !address}
+          disabled={isProcessing || !email || !name || !address || priceLoading}
           className="w-full flex items-center justify-center gap-2 bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold py-4 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isProcessing ? (
@@ -522,13 +602,13 @@ function CheckoutForm({
               Procesando...
             </>
           ) : (
-            `Pagar $${price} USD con Tarjeta`
+            `Pagar $${currentPrice} USD con Tarjeta`
           )}
         </button>
         <button
           type="button"
           onClick={handlePayPalCheckout}
-          disabled={isProcessing || !email || !name || !address}
+          disabled={isProcessing || !email || !name || !address || priceLoading}
           className="w-full flex items-center justify-center gap-2 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-4 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Pagar con PayPal
@@ -539,13 +619,13 @@ function CheckoutForm({
           disabled={isProcessing}
           className="w-full text-zinc-400 hover:text-white transition py-2 disabled:opacity-50"
         >
-          Volver a personalizacion
+          Volver a personalización
         </button>
       </div>
 
       {/* Test Card Info */}
       <div className="text-xs text-zinc-500 text-center">
-        <p>Modo prueba: Usa el numero de tarjeta 4242 4242 4242 4242</p>
+        <p>Modo prueba: Usa el número de tarjeta 4242 4242 4242 4242</p>
       </div>
     </form>
   );

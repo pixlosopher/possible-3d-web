@@ -341,3 +341,77 @@ export function getMeshUrl(path: string | null): string | null {
   if (path.startsWith('http')) return path;
   return `${API_BASE_URL}${path}`;
 }
+
+// ============ Regional Pricing Types ============
+
+export interface RegionalSize {
+  key: string;
+  name: string;
+  name_es: string;
+  height_mm: number;
+  description: string;
+  description_es: string;
+  price_cents: number;
+  price_usd: number;
+  price_display: string;
+  local_currency: {
+    currency_code: string;
+    symbol: string;
+    amount: number;
+    display: string;
+  } | null;
+}
+
+export interface RegionalPricing {
+  country_code: string;
+  region: {
+    key: string;
+    name: string;
+    name_es: string;
+  };
+  currency: string;
+  sizes: RegionalSize[];
+}
+
+/**
+ * Get regional pricing for a specific country
+ * Returns prices based on shipping destination (LATAM vs USA/Canada)
+ */
+export async function getRegionalPricing(countryCode: string): Promise<RegionalPricing> {
+  const response = await fetch(`${API_BASE_URL}/api/pricing/${countryCode}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch regional pricing');
+  }
+
+  return response.json();
+}
+
+/**
+ * Calculate regional price for a specific size and country
+ */
+export async function calculateRegionalPrice(
+  size: string,
+  countryCode: string
+): Promise<{
+  size_key: string;
+  region_key: string;
+  country_code: string;
+  price_cents: number;
+  price_usd: number;
+  price_display: string;
+  local_currency: {
+    currency_code: string;
+    symbol: string;
+    amount: number;
+    display: string;
+  } | null;
+}> {
+  const response = await fetch(`${API_BASE_URL}/api/pricing/${countryCode}/${size}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to calculate regional price');
+  }
+
+  return response.json();
+}

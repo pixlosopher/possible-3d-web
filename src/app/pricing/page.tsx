@@ -1,36 +1,25 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Printer, ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Globe, Loader2 } from "lucide-react";
+import { getRegionalPricing, RegionalPricing } from "@/lib/api";
 
-const PRICING_DATA = [
-  {
-    size: "Pequeño",
-    height: "50mm",
-    description: "Perfecto para figuras de escritorio",
-    materials: [
-      { name: "Plástico PLA", price: 29, features: ["Duradero", "Acabado mate", "Envío en 5-7 días"] },
-      { name: "Resina Premium", price: 39, features: ["Alto detalle", "Acabado liso", "Envío en 7-10 días"] },
-    ],
-  },
-  {
-    size: "Mediano",
-    height: "75mm",
-    description: "Ideal para coleccionables",
-    popular: true,
-    materials: [
-      { name: "Plástico PLA", price: 49, features: ["Duradero", "Acabado mate", "Envío en 5-7 días"] },
-      { name: "Resina Premium", price: 59, features: ["Alto detalle", "Acabado liso", "Envío en 7-10 días"] },
-    ],
-  },
-  {
-    size: "Grande",
-    height: "100mm",
-    description: "Piezas de exhibición",
-    materials: [
-      { name: "Plástico PLA", price: 69, features: ["Duradero", "Acabado mate", "Envío en 7-10 días"] },
-      { name: "Resina Premium", price: 89, features: ["Alto detalle", "Acabado liso", "Envío en 10-14 días"] },
-    ],
-  },
+// Countries available for shipping
+const COUNTRIES = [
+  { code: "MX", name: "México", flag: "🇲🇽" },
+  { code: "US", name: "Estados Unidos", flag: "🇺🇸" },
+  { code: "CA", name: "Canadá", flag: "🇨🇦" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴" },
+  { code: "CL", name: "Chile", flag: "🇨🇱" },
+  { code: "BR", name: "Brasil", flag: "🇧🇷" },
+  { code: "PE", name: "Perú", flag: "🇵🇪" },
+  { code: "EC", name: "Ecuador", flag: "🇪🇨" },
+  { code: "UY", name: "Uruguay", flag: "🇺🇾" },
+  { code: "PA", name: "Panamá", flag: "🇵🇦" },
+  { code: "CR", name: "Costa Rica", flag: "🇨🇷" },
 ];
 
 const FAQ = [
@@ -39,16 +28,16 @@ const FAQ = [
     a: "Simplemente describe lo que quieres crear en lenguaje natural. Nuestra IA genera un concepto 2D único, lo convierte en un modelo 3D, y lo imprimimos y enviamos profesionalmente a tu dirección.",
   },
   {
-    q: "¿Qué materiales utilizan?",
-    a: "Ofrecemos plástico PLA para impresiones duraderas y económicas, y resina premium para piezas de alto detalle con acabados lisos. Ambos son seguros y duraderos.",
+    q: "¿Por qué varían los precios según el país?",
+    a: "Los precios reflejan los costos de producción y envío a cada región. Los envíos a Latinoamérica tienen costos logísticos diferentes que a Estados Unidos y Canadá.",
   },
   {
     q: "¿Cuánto tarda el envío?",
-    a: "La producción toma 3-5 días hábiles. El envío es gratuito en México y toma 5-7 días adicionales. Envíos internacionales disponibles al finalizar la compra.",
+    a: "La producción toma 5-7 días hábiles. El envío internacional toma 7-14 días adicionales dependiendo de tu ubicación.",
   },
   {
-    q: "¿Puedo obtener un tamaño o material personalizado?",
-    a: "¡Sí! Contáctanos para pedidos personalizados incluyendo tamaños más grandes, materiales especiales, o cantidades al mayoreo. También ofrecemos consultoría para artistas.",
+    q: "¿Puedo obtener un tamaño personalizado?",
+    a: "¡Sí! Contáctanos para pedidos personalizados incluyendo tamaños más grandes o cantidades al mayoreo.",
   },
   {
     q: "¿Qué pasa si no estoy satisfecho?",
@@ -57,6 +46,26 @@ const FAQ = [
 ];
 
 export default function PricingPage() {
+  const [country, setCountry] = useState("MX");
+  const [pricing, setPricing] = useState<RegionalPricing | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadPricing() {
+      setLoading(true);
+      try {
+        const data = await getRegionalPricing(country);
+        setPricing(data);
+      } catch (err) {
+        console.error("Error loading pricing:", err);
+      }
+      setLoading(false);
+    }
+    loadPricing();
+  }, [country]);
+
+  const selectedCountryData = COUNTRIES.find(c => c.code === country);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-black text-white">
       {/* Navigation */}
@@ -98,82 +107,159 @@ export default function PricingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-16 pb-12 px-4 text-center">
+      <section className="pt-16 pb-8 px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
           Precios Simples y Transparentes
         </h1>
-        <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-          Sin suscripciones. Sin costos ocultos. Paga por impresión con envío gratis incluido.
+        <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-8">
+          Sin suscripciones. Sin costos ocultos. Paga por impresión con envío incluido.
         </p>
+
+        {/* Country Selector */}
+        <div className="max-w-xs mx-auto">
+          <label className="block text-sm font-medium text-zinc-400 mb-2 flex items-center justify-center gap-2">
+            <Globe className="w-4 h-4" />
+            Selecciona tu país de envío
+          </label>
+          <div className="relative">
+            <select
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#04ACC8] cursor-pointer text-center"
+            >
+              {COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.flag} {c.name}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          {pricing && (
+            <p className="text-xs text-zinc-500 mt-2">
+              {pricing.region.key === "latam"
+                ? "Precios para Latinoamérica"
+                : "Precios para USA y Canadá"}
+            </p>
+          )}
+        </div>
       </section>
 
       {/* Pricing Cards */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            {PRICING_DATA.map((tier) => (
-              <div
-                key={tier.size}
-                className={`rounded-2xl border p-6 ${
-                  tier.popular
-                    ? "bg-[#04ACC8]/10 border-[#04ACC8]/30 relative"
-                    : "bg-zinc-800/30 border-zinc-700/50"
-                }`}
-              >
-                {tier.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#04ACC8] text-black text-xs font-semibold px-3 py-1 rounded-full">
-                    Más Popular
-                  </div>
-                )}
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold mb-1">{tier.size}</h2>
-                  <div className="text-4xl font-bold text-[#04ACC8] mb-1">
-                    {tier.height}
-                  </div>
-                  <p className="text-zinc-500">{tier.description}</p>
-                </div>
-
-                <div className="space-y-4">
-                  {tier.materials.map((material) => (
-                    <div
-                      key={material.name}
-                      className="bg-zinc-900/50 rounded-xl p-4"
-                    >
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium">{material.name}</span>
-                        <span className="text-2xl font-bold">${material.price} USD</span>
-                      </div>
-                      <ul className="space-y-1">
-                        {material.features.map((feature) => (
-                          <li
-                            key={feature}
-                            className="flex items-center gap-2 text-sm text-zinc-400"
-                          >
-                            <Check className="w-4 h-4 text-[#04ACC8]" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-
-                <Link
-                  href="/create"
-                  className={`mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition ${
-                    tier.popular
-                      ? "bg-[#04ACC8] hover:bg-[#2BC4DD] text-black"
-                      : "bg-zinc-700 hover:bg-zinc-600 text-white"
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-[#04ACC8]" />
+              <span className="ml-3 text-zinc-400">Cargando precios...</span>
+            </div>
+          ) : pricing ? (
+            <div className="grid md:grid-cols-4 gap-6">
+              {pricing.sizes.map((size, index) => (
+                <div
+                  key={size.key}
+                  className={`rounded-2xl border p-6 ${
+                    index === 1
+                      ? "bg-[#04ACC8]/10 border-[#04ACC8]/30 relative"
+                      : "bg-zinc-800/30 border-zinc-700/50"
                   }`}
                 >
-                  Crear Impresión {tier.size}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            ))}
-          </div>
+                  {index === 1 && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#04ACC8] text-black text-xs font-semibold px-3 py-1 rounded-full">
+                      Más Popular
+                    </div>
+                  )}
+                  <div className="text-center mb-6">
+                    <h2 className="text-xl font-bold mb-1">{size.name_es}</h2>
+                    <div className="text-4xl font-bold text-[#04ACC8] mb-1">
+                      {size.height_mm}mm
+                    </div>
+                    <p className="text-zinc-500 text-sm">{size.description_es}</p>
+                  </div>
+
+                  <div className="bg-zinc-900/50 rounded-xl p-4 mb-4">
+                    <div className="text-center">
+                      <span className="text-3xl font-bold text-white">
+                        {size.price_display}
+                      </span>
+                      <span className="text-zinc-400 ml-1">USD</span>
+                    </div>
+                    {size.local_currency && (
+                      <div className="text-center text-sm text-zinc-400 mt-1">
+                        ≈ {size.local_currency.display}
+                      </div>
+                    )}
+                  </div>
+
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "Plástico profesional",
+                      "Acabado de alta calidad",
+                      "Envío incluido",
+                      `Entrega en 10-15 días`,
+                    ].map((feature) => (
+                      <li
+                        key={feature}
+                        className="flex items-center gap-2 text-sm text-zinc-400"
+                      >
+                        <Check className="w-4 h-4 text-[#04ACC8]" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    href="/create"
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition ${
+                      index === 1
+                        ? "bg-[#04ACC8] hover:bg-[#2BC4DD] text-black"
+                        : "bg-zinc-700 hover:bg-zinc-600 text-white"
+                    }`}
+                  >
+                    Crear {size.name_es}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-zinc-500 py-12">
+              Error al cargar precios. Intenta nuevamente.
+            </div>
+          )}
         </div>
       </section>
+
+      {/* Region Info Banner */}
+      {pricing && (
+        <section className="py-8 px-4">
+          <div className="max-w-4xl mx-auto bg-zinc-800/50 border border-zinc-700 rounded-2xl p-6 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <span className="text-2xl">{selectedCountryData?.flag}</span>
+              <h3 className="text-lg font-semibold">
+                Envío a {selectedCountryData?.name}
+              </h3>
+            </div>
+            <p className="text-zinc-400 text-sm">
+              {pricing.region.key === "latam" ? (
+                <>
+                  Los precios incluyen envío internacional desde nuestros centros de producción.
+                  Entrega estimada: 10-15 días hábiles. Sin costos adicionales de aduana.
+                </>
+              ) : (
+                <>
+                  Envío rápido dentro de USA/Canadá.
+                  Entrega estimada: 7-10 días hábiles.
+                </>
+              )}
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* What's Included */}
       <section className="py-12 px-4 bg-zinc-900/50">
@@ -183,8 +269,8 @@ export default function PricingPage() {
             {[
               { label: "Generación IA", desc: "Revisiones ilimitadas" },
               { label: "Vista Previa 3D", desc: "Visualiza antes de ordenar" },
-              { label: "Envío Gratis", desc: "Pedidos en México" },
-              { label: "Garantía de Satisfacción", desc: "100% devolución" },
+              { label: "Envío Incluido", desc: "A cualquier país" },
+              { label: "Garantía 100%", desc: "Satisfacción garantizada" },
             ].map((item) => (
               <div key={item.label} className="text-center">
                 <div className="w-12 h-12 bg-[#04ACC8]/10 rounded-full flex items-center justify-center mx-auto mb-3">

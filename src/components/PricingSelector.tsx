@@ -1,121 +1,161 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Check, Loader2 } from "lucide-react";
-import { getOptions, calculatePrice, Size, Material, Color, OptionsResponse, PriceBreakdown } from "@/lib/api";
+import { useState, useEffect, useCallback } from "react";
+import { Check, Loader2, Globe } from "lucide-react";
+import { getRegionalPricing, RegionalPricing, RegionalSize } from "@/lib/api";
 
 interface PricingSelectorProps {
   onSelect: (size: string, material: string, color: string | undefined, price: number) => void;
   selectedSize: string | null;
   selectedMaterial: string | null;
   selectedColor: string | null;
+  selectedCountry?: string;
+  onCountryChange?: (country: string) => void;
 }
+
+// Countries available for shipping
+const COUNTRIES = [
+  { code: "MX", name: "México", flag: "🇲🇽" },
+  { code: "US", name: "Estados Unidos", flag: "🇺🇸" },
+  { code: "CA", name: "Canadá", flag: "🇨🇦" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴" },
+  { code: "CL", name: "Chile", flag: "🇨🇱" },
+  { code: "BR", name: "Brasil", flag: "🇧🇷" },
+  { code: "PE", name: "Perú", flag: "🇵🇪" },
+  { code: "EC", name: "Ecuador", flag: "🇪🇨" },
+  { code: "UY", name: "Uruguay", flag: "🇺🇾" },
+  { code: "PA", name: "Panamá", flag: "🇵🇦" },
+  { code: "CR", name: "Costa Rica", flag: "🇨🇷" },
+  { code: "GT", name: "Guatemala", flag: "🇬🇹" },
+  { code: "DO", name: "Rep. Dominicana", flag: "🇩🇴" },
+];
 
 export default function PricingSelector({
   onSelect,
   selectedSize,
   selectedMaterial,
   selectedColor,
+  selectedCountry: initialCountry,
+  onCountryChange,
 }: PricingSelectorProps) {
-  const [options, setOptions] = useState<OptionsResponse | null>(null);
+  const [pricing, setPricing] = useState<RegionalPricing | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [size, setSize] = useState(selectedSize || "medium");
-  const [material, setMaterial] = useState(selectedMaterial || "plastic_white");
-  const [color, setColor] = useState<string | undefined>(selectedColor || undefined);
-  const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null);
-  const [priceLoading, setPriceLoading] = useState(false);
+  const [country, setCountry] = useState(initialCountry || "MX");
+  const [size, setSize] = useState(selectedSize || "small");
 
-  // Load options on mount
+  // Material is fixed to standard plastic for now (simplified regional pricing)
+  const material = "plastic_white";
+
+  // Memoize the onSelect callback
+  const handleSelect = useCallback((sizeKey: string, priceCents: number) => {
+    onSelect(sizeKey, material, undefined, priceCents);
+  }, [onSelect, material]);
+
+  // Load pricing when country changes
   useEffect(() => {
-    async function loadOptions() {
+    async function loadPricing() {
+      setLoading(true);
+      setError(null);
       try {
-        const data = await getOptions();
-        setOptions(data);
+        const data = await getRegionalPricing(country);
+        setPricing(data);
         setLoading(false);
       } catch (err) {
-        setError("Error al cargar opciones");
+        setError("Error al cargar precios");
         setLoading(false);
       }
     }
-    loadOptions();
-  }, []);
+    loadPricing();
+  }, [country]);
 
-  // Update price when selection changes
+  // Update price when size changes
   useEffect(() => {
-    async function updatePrice() {
-      if (!options) return;
+    if (!pricing) return;
 
-      const selectedMat = options.materials[material];
-      const needsColor = selectedMat && selectedMat.colors && selectedMat.colors.length > 0 && !selectedMat.supports_full_color;
-
-      // If material needs color but none selected, don't calculate
-      if (needsColor && !color) {
-        setPriceBreakdown(null);
-        return;
-      }
-
-      setPriceLoading(true);
-      try {
-        const breakdown = await calculatePrice(material, size, color);
-        setPriceBreakdown(breakdown);
-        onSelect(size, material, color, breakdown.total_cents);
-      } catch (err) {
-        console.error("Price calculation error:", err);
-      }
-      setPriceLoading(false);
+    const selectedSizeData = pricing.sizes.find(s => s.key === size);
+    if (selectedSizeData) {
+      handleSelect(size, selectedSizeData.price_cents);
     }
-    updatePrice();
-  }, [size, material, color, options, onSelect]);
+  }, [size, pricing, handleSelect]);
 
-  // Reset color when material changes (if material doesn't support current color)
+  // Notify parent when country changes
   useEffect(() => {
-    if (!options) return;
-    const selectedMat = options.materials[material];
-    if (selectedMat) {
-      if (!selectedMat.colors || selectedMat.colors.length === 0 || selectedMat.supports_full_color) {
-        setColor(undefined);
-      } else if (color && !selectedMat.colors.find(c => c.key === color)) {
-        setColor(selectedMat.colors[0]?.key);
-      } else if (!color && selectedMat.colors && selectedMat.colors.length > 0) {
-        setColor(selectedMat.colors[0]?.key);
-      }
+    if (onCountryChange) {
+      onCountryChange(country);
     }
-  }, [material, options]);
+  }, [country, onCountryChange]);
+
+  const handleCountryChange = (newCountry: string) => {
+    setCountry(newCountry);
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="w-8 h-8 animate-spin text-[#04ACC8]" />
-        <span className="ml-3 text-zinc-400">Cargando opciones...</span>
+        <span className="ml-3 text-zinc-400">Cargando precios...</span>
       </div>
     );
   }
 
-  if (error || !options) {
+  if (error || !pricing) {
     return (
       <div className="text-red-400 text-center py-8">
-        {error || "Error al cargar opciones"}
+        {error || "Error al cargar precios"}
       </div>
     );
   }
 
-  const sizes = Object.values(options.sizes).sort((a, b) => a.height_mm - b.height_mm);
-  const materials = Object.values(options.materials);
-  const selectedMat = options.materials[material];
-  const availableColors = selectedMat?.colors || [];
-  const needsColorSelection = availableColors.length > 0 && !selectedMat?.supports_full_color;
+  const selectedSizeData = pricing.sizes.find(s => s.key === size);
+  const selectedCountryData = COUNTRIES.find(c => c.code === country);
 
   return (
     <div className="space-y-6">
+      {/* Country Selection */}
+      <div>
+        <label className="block text-sm font-medium text-zinc-400 mb-3 flex items-center gap-2">
+          <Globe className="w-4 h-4" />
+          País de Envío
+        </label>
+        <div className="relative">
+          <select
+            value={country}
+            onChange={(e) => handleCountryChange(e.target.value)}
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#04ACC8] cursor-pointer"
+          >
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.flag} {c.name}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+            <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+        {pricing.region.key === "latam" ? (
+          <p className="text-xs text-zinc-500 mt-2">
+            Precios para Latinoamérica • Envío internacional incluido
+          </p>
+        ) : (
+          <p className="text-xs text-zinc-500 mt-2">
+            Precios para USA y Canadá • Envío incluido
+          </p>
+        )}
+      </div>
+
       {/* Size Selection */}
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-3">
-          Selecciona Tamano
+          Selecciona Tamaño
         </label>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {sizes.map((sizeOption) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {pricing.sizes.map((sizeOption) => (
             <button
               key={sizeOption.key}
               onClick={() => setSize(sizeOption.key)}
@@ -136,129 +176,56 @@ export default function PricingSelector({
               <div className="text-sm font-medium text-zinc-300">
                 {sizeOption.name_es}
               </div>
-              <div className="text-xs text-zinc-500 mt-1">
+              <div className="text-xs text-zinc-500 mt-1 line-clamp-2">
                 {sizeOption.description_es}
               </div>
+              <div className="mt-3 text-lg font-bold text-[#04ACC8]">
+                {sizeOption.price_display}
+              </div>
+              {sizeOption.local_currency && (
+                <div className="text-xs text-zinc-400">
+                  ≈ {sizeOption.local_currency.display}
+                </div>
+              )}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Material Selection */}
-      <div>
-        <label className="block text-sm font-medium text-zinc-400 mb-3">
-          Selecciona Material
-        </label>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {materials.map((materialOption) => {
-            // Get price for this material at current size
-            const priceRow = options.price_matrix.find(
-              (row) => row.material.key === materialOption.key
-            );
-            const priceAtSize = priceRow?.prices[size];
-
-            return (
-              <button
-                key={materialOption.key}
-                onClick={() => setMaterial(materialOption.key)}
-                className={`relative p-4 rounded-xl border transition text-left ${
-                  material === materialOption.key
-                    ? "border-[#04ACC8] bg-[#04ACC8]/10"
-                    : "border-zinc-700 bg-zinc-800/50 hover:border-zinc-600"
-                }`}
-              >
-                {material === materialOption.key && (
-                  <div className="absolute top-2 right-2">
-                    <Check className="w-4 h-4 text-[#04ACC8]" />
-                  </div>
-                )}
-                <div className="text-lg font-semibold text-white">
-                  {materialOption.name_es}
-                </div>
-                <div className="text-sm text-zinc-500 mt-1">
-                  {materialOption.description_es}
-                </div>
-                <div className="text-lg font-bold text-[#04ACC8] mt-2">
-                  {priceAtSize?.display || `$${(materialOption.base_price_cents / 100).toFixed(0)}`}
-                </div>
-                {materialOption.supports_full_color && (
-                  <span className="inline-block mt-2 text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">
-                    Full Color
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Color Selection (if material requires it) */}
-      {needsColorSelection && (
-        <div>
-          <label className="block text-sm font-medium text-zinc-400 mb-3">
-            Selecciona Color
-          </label>
-          <div className="flex flex-wrap gap-3">
-            {availableColors.map((colorOption) => (
-              <button
-                key={colorOption.key}
-                onClick={() => setColor(colorOption.key)}
-                className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border transition ${
-                  color === colorOption.key
-                    ? "border-[#04ACC8] bg-[#04ACC8]/10"
-                    : "border-zinc-700 bg-zinc-800/50 hover:border-zinc-600"
-                }`}
-              >
-                {color === colorOption.key && (
-                  <div className="absolute top-2 right-2">
-                    <Check className="w-4 h-4 text-[#04ACC8]" />
-                  </div>
-                )}
-                <div
-                  className="w-6 h-6 rounded-full border border-zinc-600"
-                  style={{ backgroundColor: colorOption.hex }}
-                />
-                <span className="text-zinc-300">{colorOption.name_es}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Price Summary */}
       <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
         <div className="flex justify-between items-center">
           <div>
-            <div className="text-zinc-400 text-sm">Tu Seleccion</div>
+            <div className="text-zinc-400 text-sm">Tu Selección</div>
             <div className="text-white font-medium">
-              {options.sizes[size]?.name_es} ({options.sizes[size]?.height_mm}mm) •{" "}
-              {options.materials[material]?.name_es}
-              {color && availableColors.find(c => c.key === color) && (
-                <> • {availableColors.find(c => c.key === color)?.name_es}</>
-              )}
+              {selectedSizeData?.name_es} ({selectedSizeData?.height_mm}mm)
+              <span className="text-zinc-500 ml-2">
+                • {selectedCountryData?.flag} {selectedCountryData?.name}
+              </span>
             </div>
           </div>
           <div className="text-right">
             <div className="text-zinc-400 text-sm">Total</div>
-            {priceLoading ? (
-              <Loader2 className="w-6 h-6 animate-spin text-[#04ACC8]" />
-            ) : priceBreakdown ? (
-              <div className="text-3xl font-bold text-[#04ACC8]">
-                {priceBreakdown.total_display}
-              </div>
-            ) : needsColorSelection && !color ? (
-              <div className="text-lg text-zinc-500">
-                Selecciona un color
-              </div>
+            {selectedSizeData ? (
+              <>
+                <div className="text-3xl font-bold text-[#04ACC8]">
+                  {selectedSizeData.price_display}
+                </div>
+                {selectedSizeData.local_currency && (
+                  <div className="text-sm text-zinc-400">
+                    ≈ {selectedSizeData.local_currency.display}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-lg text-zinc-500">
-                Calculando...
+                Selecciona un tamaño
               </div>
             )}
           </div>
         </div>
         <div className="mt-3 pt-3 border-t border-zinc-700 text-xs text-zinc-500">
-          Incluye envio internacional • Entrega en 10-15 dias habiles
+          Incluye envío internacional • Entrega en 10-15 días hábiles
         </div>
       </div>
     </div>
