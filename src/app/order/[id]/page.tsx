@@ -19,6 +19,9 @@ import {
   Sparkles,
 } from "lucide-react";
 
+// Stage type for order status tracking
+type Stage = "loading" | "awaiting_payment" | "paid" | "generating_3d" | "model_ready" | "printing" | "shipped" | "delivered" | "failed";
+
 // Dynamically import ModelViewer to avoid SSR issues with Three.js
 const ModelViewer = dynamic(() => import("@/components/ModelViewer"), {
   ssr: false,
@@ -148,8 +151,6 @@ export default function OrderDetailPage() {
   }, [job, order, fetchJobDetails]);
 
   // Determine what stage we're in
-  type Stage = "loading" | "awaiting_payment" | "paid" | "generating_3d" | "model_ready" | "printing" | "shipped" | "delivered" | "failed";
-
   const getStage = (): Stage => {
     if (!order || !job) return "loading";
     if (order.status === "pending") return "awaiting_payment";
@@ -162,7 +163,7 @@ export default function OrderDetailPage() {
     return "paid";
   };
 
-  const stage = getStage();
+  const stage: Stage = getStage();
 
   // Build mesh URL for viewer
   const getMeshUrl = () => {
@@ -253,15 +254,6 @@ export default function OrderDetailPage() {
                   fill
                   className="object-cover"
                 />
-                {stage === "generating_3d" && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <div className="text-center">
-                      <RotateCw className="w-12 h-12 text-[#04ACC8] animate-spin mx-auto mb-3" />
-                      <p className="text-white font-medium">Generando modelo 3D...</p>
-                      <p className="text-zinc-400 text-sm">{job?.progress || 0}%</p>
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               <div className="aspect-square rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center">
