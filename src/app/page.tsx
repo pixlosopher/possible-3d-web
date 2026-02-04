@@ -184,7 +184,7 @@ export default function Home() {
                   <p className="text-sm text-zinc-500 mt-1">Proyectos</p>
                 </div>
                 <div>
-                  <span className="text-3xl font-bold text-[#04ACC8]">$29</span>
+                  <span className="text-3xl font-bold text-[#04ACC8]">$55</span>
                   <p className="text-sm text-zinc-500 mt-1">Desde USD</p>
                 </div>
               </div>
@@ -373,11 +373,12 @@ export default function Home() {
           </div>
 
           {/* Pricing cards */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
             {[
-              { name: "Pequeño", price: "$29", size: "50mm", popular: false },
-              { name: "Mediano", price: "$49", size: "75mm", popular: true },
-              { name: "Grande", price: "$69", size: "100mm", popular: false },
+              { name: "Mini", price: "$55", size: "50mm", popular: false },
+              { name: "Pequeño", price: "$75", size: "75mm", popular: false },
+              { name: "Mediano", price: "$109", size: "100mm", popular: true },
+              { name: "Grande", price: "$179", size: "150mm", popular: false },
             ].map((plan) => (
               <div
                 key={plan.name}
