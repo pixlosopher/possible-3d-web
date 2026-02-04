@@ -148,7 +148,9 @@ export default function OrderDetailPage() {
   }, [job, order, fetchJobDetails]);
 
   // Determine what stage we're in
-  const getStage = () => {
+  type Stage = "loading" | "awaiting_payment" | "paid" | "generating_3d" | "model_ready" | "printing" | "shipped" | "delivered" | "failed";
+
+  const getStage = (): Stage => {
     if (!order || !job) return "loading";
     if (order.status === "pending") return "awaiting_payment";
     if (job.status === "converting_3d") return "generating_3d";
