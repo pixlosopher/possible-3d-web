@@ -386,7 +386,8 @@ function CheckoutForm({
         material,
         color,
         "detailed", // mesh_style
-        { name, address, city, state, zip, country }
+        { name, address, city, state, zip, country },
+        customHeight // Pass custom height for custom sizes
       );
 
       // Redirect to Stripe Checkout
@@ -419,6 +420,7 @@ function CheckoutForm({
           mesh_style: "detailed",
           shipping_address: { name, address, city, state, zip, country },
           provider: "paypal",
+          custom_height_mm: customHeight, // Pass custom height for custom sizes
         }),
       });
 

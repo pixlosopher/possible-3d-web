@@ -241,7 +241,8 @@ export async function createCheckout(
     state: string;
     zip: string;
     country: string;
-  }
+  },
+  customHeightMm?: number
 ): Promise<CreateCheckoutResponse> {
   const response = await fetch(`${API_BASE_URL}/api/checkout`, {
     method: 'POST',
@@ -254,6 +255,7 @@ export async function createCheckout(
       color,
       mesh_style: meshStyle,
       shipping_address: shippingAddress || {},
+      custom_height_mm: customHeightMm,
     }),
   });
 
