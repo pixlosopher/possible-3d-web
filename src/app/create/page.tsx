@@ -172,7 +172,7 @@ export default function CreatePage() {
             {jobStatus && (
               <div className="mt-4 bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
                 <h3 className="text-sm font-medium text-zinc-400 mb-2">Tu Diseno</h3>
-                <p className="text-white">{jobStatus.description}</p>
+                <p className="text-white">{jobStatus.description || "Modelo generado"}</p>
                 {isConceptOnly && (
                   <div className="mt-3 flex items-start gap-2 text-xs text-amber-400/80 bg-amber-500/10 rounded-lg p-2">
                     <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
