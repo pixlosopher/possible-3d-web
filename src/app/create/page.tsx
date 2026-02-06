@@ -402,45 +402,6 @@ function CheckoutForm({
     }
   };
 
-  const handlePayPalCheckout = async () => {
-    setIsProcessing(true);
-    setError(null);
-
-    try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const response = await fetch(`${API_URL}/api/checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          job_id: jobId,
-          email,
-          size,
-          material,
-          color,
-          mesh_style: "detailed",
-          shipping_address: { name, address, city, state, zip, country },
-          provider: "paypal",
-          custom_height_mm: customHeight, // Pass custom height for custom sizes
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Error al crear pago con PayPal");
-      }
-
-      if (data.checkout_url) {
-        window.location.href = data.checkout_url;
-      } else {
-        throw new Error("No se recibió URL de PayPal");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error en pago con PayPal");
-      setIsProcessing(false);
-    }
-  };
-
   // Format size name for display
   const getSizeName = (key: string) => {
     // Handle custom size
@@ -632,16 +593,8 @@ function CheckoutForm({
               Procesando...
             </>
           ) : (
-            `Pagar $${currentPrice} USD con Tarjeta`
+            `Pagar $${currentPrice} USD`
           )}
-        </button>
-        <button
-          type="button"
-          onClick={handlePayPalCheckout}
-          disabled={isProcessing || !email || !name || !address || priceLoading}
-          className="w-full flex items-center justify-center gap-2 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-4 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Pagar con PayPal
         </button>
         <button
           type="button"
