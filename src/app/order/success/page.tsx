@@ -33,26 +33,68 @@ function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("order_id");
+  const provider = searchParams.get("provider");
+  const paymentId = searchParams.get("paymentId");
+  const payerId = searchParams.get("PayerID");
 
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(5);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (orderId) {
+    // If PayPal redirect, execute payment first
+    if (provider === "paypal" && paymentId && payerId) {
+      executePayPalPayment();
+    } else if (orderId) {
       fetchOrderDetails();
     } else {
       setLoading(false);
     }
-  }, [orderId]);
+  }, [orderId, provider, paymentId, payerId]);
+
+  // Execute PayPal payment after user approval
+  const executePayPalPayment = async () => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const response = await fetch(`${API_URL}/api/paypal/execute`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentId,
+          payerId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Error al ejecutar pago de PayPal");
+      }
+
+      // Payment successful, now fetch order details
+      if (data.order_id) {
+        const orderResponse = await fetch(`${API_URL}/api/order/${data.order_id}`);
+        if (orderResponse.ok) {
+          const orderData = await orderResponse.json();
+          setOrder(orderData);
+        }
+      }
+    } catch (err) {
+      console.error("PayPal execution error:", err);
+      setError(err instanceof Error ? err.message : "Error en pago PayPal");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Auto-redirect countdown
   useEffect(() => {
     if (!loading && order && countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
-    } else if (countdown === 0 && orderId) {
-      router.push(`/order/${orderId}`);
+    } else if (countdown === 0 && (orderId || order?.id)) {
+      router.push(`/order/${orderId || order?.id}`);
     }
   }, [countdown, loading, order, orderId, router]);
 
@@ -99,8 +141,29 @@ function OrderSuccessContent() {
         {loading ? (
           <div className="text-center">
             <div className="animate-spin w-16 h-16 border-4 border-[#04ACC8] border-t-transparent rounded-full mx-auto mb-6" />
-            <h2 className="text-2xl font-bold mb-2">Procesando tu pago...</h2>
+            <h2 className="text-2xl font-bold mb-2">
+              {provider === "paypal" ? "Procesando pago de PayPal..." : "Procesando tu pago..."}
+            </h2>
             <p className="text-zinc-400">Por favor espera un momento</p>
+          </div>
+        ) : error ? (
+          <div className="text-center">
+            {/* Error State */}
+            <div className="mb-8">
+              <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
+                <svg className="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            </div>
+            <h1 className="text-4xl font-bold mb-4 text-red-400">Error en el Pago</h1>
+            <p className="text-zinc-400 mb-8">{error}</p>
+            <Link
+              href="/create"
+              className="inline-flex items-center gap-2 bg-[#04ACC8] hover:bg-[#2BC4DD] text-black font-semibold py-4 px-8 rounded-xl transition"
+            >
+              Intentar de Nuevo
+            </Link>
           </div>
         ) : (
           <div className="text-center">
@@ -119,7 +182,7 @@ function OrderSuccessContent() {
               ¡Pago Confirmado!
             </h1>
             <p className="text-xl text-zinc-300 mb-2">
-              Gracias por tu compra
+              Gracias por tu compra {provider === "paypal" && "con PayPal"}
             </p>
             <p className="text-zinc-400 mb-8">
               Tu modelo 3D está siendo generado ahora mismo
