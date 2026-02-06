@@ -61,14 +61,26 @@ function OrderSuccessContent() {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       const response = await fetch(`${API_URL}/api/order/${orderId}`);
 
+      // Check content type to avoid JSON parse errors
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.error("API returned non-JSON response:", await response.text());
+        // Still show success page, just without order details
+        return;
+      }
+
       if (!response.ok) {
-        throw new Error("Error al obtener los detalles del pedido");
+        const errorData = await response.json();
+        console.error("API error:", errorData);
+        // Still show success page, just without order details
+        return;
       }
 
       const data = await response.json();
       setOrder(data);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching order:", err);
+      // Still show success page even if we can't fetch details
     } finally {
       setLoading(false);
     }
